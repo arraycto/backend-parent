@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: zuul-gateway
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+server:
+  port: 9090
+zuul:
+  routes:
+    template-service:
+      path: /template-api/**
+      serviceId: template-service
+      strip-prefix: true
+      sensitive-headers:
+  prefix: /coupon
+  host:
+    connect-timeout-millis: 10000
+    socket-timeout-millis: 60000
+  ribbon:
+    eager-load:
+      enabled: true
+  ribbon-isolation-strategy: thread
+
+###Hystrix的超时时间要大于Ribbon否则还没到Ribbon重试，就被Hystrix给熔断了
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+###全局的Ribbon配置
+ribbon:
+  eager-load:
+    enabled: true
+  ConnectTimeout: 3000
+  ReadTimeout: 3000
+##每个路由服务使用单独的负载均衡策略
+template-service:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.hyf.backend.zuul.ribbon.MyRuleLoadBalancer
+    ReadTimeout: 2000
+    ConnectTimeout: 1000
+    MaxAutoRetries: 1
+    MaxAutoRetriesNextServer: 1

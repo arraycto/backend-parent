@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyf.backend.distribution.coupon.mapper.SalesCouponMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hyf.backend.distribution.coupon.entity.SalesCoupon">
+        <id column="id" property="id" />
+        <result column="template_id" property="templateId" />
+        <result column="user_id" property="userId" />
+        <result column="coupon_code" property="couponCode" />
+        <result column="get_time" property="getTime" />
+        <result column="status" property="status" />
+    </resultMap>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyf.backend.coupon.template.mapper.SalesCouponTemplateMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hyf.backend.coupon.template.entity.SalesCouponTemplate">
+        <id column="id" property="id"/>
+        <result column="available" property="available"/>
+        <result column="expired" property="expired"/>
+        <result column="name" property="name"/>
+        <result column="logo" property="logo"/>
+        <result column="type" property="type"/>
+        <!--        <result column="product_line" property="productLine" javaType="com.hyf.backend.common.constant.ProductLineEnum"-->
+        <!--                typeHandler="com.hyf.backend.common.typehandler.ProductLineTypeHandler"/>-->
+        <result column="product_line" property="productLine"/>
+        <result column="coupon_count" property="couponCount"/>
+        <result column="create_time" property="createTime"/>
+        <result column="admin_user_id" property="adminUserId"/>
+        <result column="template_key" property="templateKey"/>
+        <result column="dispatch_users" property="dispatchUsers"/>
+        <result column="rule" property="rule"/>
+    </resultMap>
+</mapper>

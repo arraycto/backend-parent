@@ -1,0 +1,46 @@
+#spring:
+#  application:
+#    name: coupon-eureka
+#  profiles: server1
+#server:
+#  port: 8000
+#eureka:
+#  instance:
+#    ##主机名称
+#    hostname: server1
+#    ##Spring Cloud 不允许在同一台机器上部署多个实例 默认为true，关掉就可以一台机器部署多个实例了
+#    prefer-ip-address: false
+#  client:
+#    service-url:
+#      ##Eureka Server所在的地址， 查询服务和注册服务都需要依赖该地址
+#      defaultZone: http://server2:8001/eureka/,http://server3:8002/eureka/
+#
+#---
+#spring:
+#  application:
+#    name: coupon-eureka
+#  profiles: server2
+#server:
+#  port: 8001
+#eureka:
+#  instance:
+#    hostname: server2
+#    prefer-ip-address: false
+#  client:
+#    service-url:
+#      defaultZone: http://server1:8000/eureka/,http://server3:8002/eureka/
+#
+#---
+#spring:
+#  application:
+#    name: coupon-eureka
+#  profiles: server3
+#server:
+#  port: 8002
+#eureka:
+#  instance:
+#    hostname: server3
+#    prefer-ip-address: false
+#  client:
+#    service-url:
+#      defaultZone: http://server1:8000/eureka/,http://server2:8001/eureka/
