@@ -1,6 +1,11 @@
 spring:
   application:
     name: zuul-gateway
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      probability: 1.0
 
 eureka:
   instance:
@@ -26,7 +31,6 @@ zuul:
     eager-load:
       enabled: true
   ribbon-isolation-strategy: thread
-
 ###Hystrix的超时时间要大于Ribbon否则还没到Ribbon重试，就被Hystrix给熔断了
 hystrix:
   command:
