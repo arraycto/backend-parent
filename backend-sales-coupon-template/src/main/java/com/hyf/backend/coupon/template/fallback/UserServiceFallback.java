@@ -19,7 +19,7 @@ public class UserServiceFallback implements FallbackFactory<UserServiceApiClient
         log.error("调用用户服务出异常....", throwable);
         return new UserServiceApiClient() {
             @Override
-            public ResponseVO<String> hello() {
+            public ResponseVO<String> hello(String hello) {
                 return ResponseVO.ok("hystrix fallback");
             }
         };

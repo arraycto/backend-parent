@@ -26,28 +26,30 @@ spring:
     host: 127.0.0.1
     port: 6379
     timeout: 10000
-app:
-  id: user-service
-apollo:
-  meta: http://localhost:8080
-  bootstrap:
-    enabled: true
-    namespaces: hyf
+#app:
+#  id: user-service
+#apollo:
+#  meta: http://localhost:8080
+#  bootstrap:
+#    enabled: true
+#    namespaces: hyf
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
-#logging:
-#  level:
 feign:
   httpclient:
     connection-timeout: 3000
-  okhttp:
     enabled: true
   hystrix:
     enabled: true
+#  compression:
+#    response:
+#      enabled: true
+#    request:
+#      enabled: true
 ribbon:
   eager-load:
     enabled: true
@@ -56,8 +58,7 @@ ribbon:
   MaxAutoRetries: 2
   MaxAutoRetriesNextServer: 1
   OkToRetryOnAllOperations: true
-#    com.hyf.backend
-
+#    com.hyf.backendw
 hystrix:
   command:
     default:
@@ -67,3 +68,6 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 10000
+logging:
+  level:
+    com.hyf.backend.coupon.template.feign.UserServiceApiClient: DEBUG

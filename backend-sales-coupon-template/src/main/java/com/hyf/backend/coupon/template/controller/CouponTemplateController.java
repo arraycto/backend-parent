@@ -25,6 +25,7 @@ public class CouponTemplateController {
 
     @Value("${test.name:hahaha}")
     private String name;
+
     @GetMapping("/get")
     public String get(HttpServletRequest request) {
         Enumeration<String> headerNames = request.getHeaderNames();
@@ -38,7 +39,7 @@ public class CouponTemplateController {
 
     @GetMapping("/getUser")
     public ResponseVO<String> getUser() {
-        ResponseVO<String> hello = userServiceApiClient.hello();
+        ResponseVO<String> hello = userServiceApiClient.hello("haahhahahaha");
         if (hello.isOk()) {
             return hello;
         } else {
@@ -47,7 +48,8 @@ public class CouponTemplateController {
     }
 
     @GetMapping("/test")
-    public String test() {
+    public String test(String code) {
+        log.info("收到的code参数: {}", code);
         return name;
     }
 

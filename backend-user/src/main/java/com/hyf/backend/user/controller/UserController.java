@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -46,9 +47,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public ResponseVO<String> hello() throws InterruptedException {
+    public ResponseVO<String> hello(@RequestParam("hello") String hello) throws InterruptedException {
         log.info("请求test...");
-        Thread.sleep(3000);
+//        Thread.sleep(3000);
+        log.info("hello: {}", hello);
         return ResponseVO.ok("hello");
     }
 }
