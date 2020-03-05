@@ -45,6 +45,11 @@
             <artifactId>beetl</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+        </dependency>
+
         <!-- 日志框架依赖 -->
         <dependency>
             <groupId>log4j</groupId>
