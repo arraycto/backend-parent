@@ -1,5 +1,7 @@
 package com.hyf.backend.coupon.template.controller;
 
+import com.hyf.backend.common.context.ContextHolder;
+import com.hyf.backend.common.context.RequestContext;
 import com.hyf.backend.coupon.template.feign.UserServiceApiClient;
 import com.hyf.backend.utils.common.vo.ResponseVO;
 import com.hyf.backend.utils.exception.BizException;
@@ -40,6 +42,7 @@ public class CouponTemplateController {
     @GetMapping("/getUser")
     public ResponseVO<String> getUser(HttpServletRequest request) {
         log.info("request remoteAdder: {}", request.getRemoteAddr());
+        log.info("uid: {}", ContextHolder.getCurrentContext().get("uid"));
         ResponseVO<String> hello = userServiceApiClient.hello("haahhahahaha");
         if (hello.isOk()) {
             return hello;

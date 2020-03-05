@@ -1,11 +1,12 @@
 package com.hyf.backend.zuul.filter;
 
-import com.netflix.zuul.context.RequestContext;
+import com.hyf.backend.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 
 /**
  * @Author: Elvis on 2020/2/25
@@ -14,27 +15,35 @@ import java.util.Objects;
  */
 @Component
 @Slf4j
-public class TokenFilter extends AbstractPreFilter{
+public class TokenFilter extends AbstractPreFilter {
     @Override
     protected Object doRun() {
         //在父类的run方法中已经获得了RequestContext
-        log.info("Token Filter Thrad: {}", Thread.currentThread().getName());
         HttpServletRequest request = requestContext.getRequest();
+        log.info("URI: {}", request.getRequestURI());
+        if (request.getRequestURI().contains("/user/login")) {
+            return success();
+        }
+
         String authorization = request.getHeader("Authorization");
         log.info("Authorization: {}", authorization);
         log.info(String.format("%s request to  %s", request.getMethod(), request.getRequestURL().toString()));
-        String token = request.getParameter("token");
-        if(Objects.isNull(token)) {
-            log.error("error: token is empty");
-            return fail(401, "token is empty");
+        if (StringUtils.isEmpty(authorization)) {
+            log.error("toke is empty");
+            return fail(401, -1, "token is empty");
         }
-        //做token校验的逻辑
+        JWTUtils.JWTResult jwtResult = JWTUtils.getInstance().checkToken(authorization);
+        if (jwtResult.isStatus()) {
+            log.info("token合法, token: {}, uid: {} ", authorization, jwtResult.getUid());
+            requestContext.addZuulRequestHeader("uid", jwtResult.getUid());
+            requestContext.addZuulRequestHeader("token", authorization);
+            return success();
+        } else {
+            log.error("token校验失败: {}", jwtResult.getMsg());
+//            throw new BizException(-1, "token校验失败");
+            return fail(HttpStatus.UNAUTHORIZED.value(), jwtResult.getCode(), jwtResult.getMsg());
+        }
 
-        //......
-//        requestContext.addZuulRequestHeader("Authorization", authorization);
-
-        //继续向下执行过滤器
-        return success();
     }
 
     @Override

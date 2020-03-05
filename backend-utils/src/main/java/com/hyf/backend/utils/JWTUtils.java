@@ -13,8 +13,6 @@ import java.util.Date;
 
 /**
  * API调用认证工具类，采用RSA加密
- * 
- * @author yinjihuan
  *
  */
 public class JWTUtils {

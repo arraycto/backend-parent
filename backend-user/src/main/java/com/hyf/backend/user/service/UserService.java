@@ -7,6 +7,6 @@ import com.hyf.backend.utils.exception.BizException;
  * @Email: yfelvis@gmail.com
  * @Desc: TODO
  */
-public interface UserServiceApi {
+public interface UserService {
     String checkUserLogin(String username,String password) throws BizException;
 }

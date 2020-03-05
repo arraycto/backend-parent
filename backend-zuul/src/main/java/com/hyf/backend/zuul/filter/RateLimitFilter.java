@@ -25,7 +25,7 @@ public class RateLimitFilter extends AbstractPreFilter {
             return success();
         } else {
             log.error("限流了...{}", request.getRequestURI());
-            return fail(402, "限流了");
+            return fail(402, 402,"限流了");
         }
     }
 

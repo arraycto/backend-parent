@@ -16,7 +16,7 @@ import java.util.List;
  * @Desc: TODO
  */
 @Service
-public class UserServiceApiImpl implements UserServiceApi {
+public class UserServiceImpl implements UserService {
     @Autowired
     private MoocBackendUserTMapper backendUserTMapper;
 

@@ -1,8 +1,11 @@
 package com.hyf.backend.zuul.filter;
 
+import com.alibaba.fastjson.JSON;
+import com.hyf.backend.utils.common.vo.ResponseVO;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
+import org.springframework.http.HttpStatus;
 
 /**
  * @Author: Elvis on 2020/2/25
@@ -36,18 +39,20 @@ public abstract class AbstractZuulFilter extends ZuulFilter {
     /**
      * 交由子过滤器调用
      *
-     * @param code
-     * @param errorMsg
      * @return
      */
-    Object fail(int code, String errorMsg) {
+    Object fail(int httpStatusCode, int bizCode, String errorMsg) {
         //NEXT变量相当于会不会向下执行
         requestContext.set(NEXT, false);
         //不再执行其他的过滤器和逻辑了
         requestContext.setSendZuulResponse(false);
         requestContext.getResponse().setContentType("application/json;charset=utf-8");
-        requestContext.setResponseStatusCode(code);
-        requestContext.setResponseBody(String.format("{\"result\": \"%s\"}", errorMsg));
+        requestContext.setResponseStatusCode(httpStatusCode);
+        ResponseVO<String> responseVO = new ResponseVO<>();
+        responseVO.setCode(bizCode);
+        responseVO.setData(null);
+        responseVO.setMsg(errorMsg);
+        requestContext.setResponseBody(JSON.toJSONString(responseVO));
 
         return null;
     }

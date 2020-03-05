@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * @Email: yfelvis@gmail.com
  * @Desc: 在过滤器中存储客户端发起请求的时间戳
  */
-@Component
+//@Component
 @Slf4j
 public class PreAccessLogFilter extends AbstractPreFilter {
     @Override

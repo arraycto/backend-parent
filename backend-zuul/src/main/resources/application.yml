@@ -26,8 +26,11 @@ zuul:
       path: /template-api/**
       serviceId: template-service
       strip-prefix: true
-      sensitive-headers:
-  prefix: /coupon
+    user-service:
+      path: /user-api/**
+      serviceId: user-service
+      strip-prefix: true
+  prefix: /api
   host:
     connect-timeout-millis: 10000
     socket-timeout-millis: 60000

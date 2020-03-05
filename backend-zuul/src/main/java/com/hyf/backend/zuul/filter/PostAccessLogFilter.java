@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @Desc: TODO
  */
 @Slf4j
-@Component
+//@Component
 public class PostAccessLogFilter extends AbstractPostFilter {
     @Override
     protected Object doRun() {
