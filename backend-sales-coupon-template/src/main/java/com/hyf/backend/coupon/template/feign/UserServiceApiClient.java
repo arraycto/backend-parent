@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Email: yfelvis@gmail.com
  * @Desc: TODO
  */
-@FeignClient(value = "user-service", fallbackFactory = UserServiceFallback.class, path = "/user")
+@FeignClient(value = "user-service", fallbackFactory = UserServiceFallback.class, path = "/user", configuration = FeignClientCustomConfig.class)
 public interface UserServiceApiClient {
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     ResponseVO<String> hello(@RequestParam("hello") String hello);

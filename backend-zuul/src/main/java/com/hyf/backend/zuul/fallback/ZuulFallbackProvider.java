@@ -1,10 +1,15 @@
 package com.hyf.backend.zuul.fallback;
 
+import com.alibaba.fastjson.JSON;
+import com.hyf.backend.utils.common.vo.ResponseVO;
 import org.springframework.cloud.netflix.zuul.filters.route.FallbackProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -13,10 +18,11 @@ import java.io.InputStream;
  * @Email: yfelvis@gmail.com
  * @Desc: TODO
  */
+@Component
 public class ZuulFallbackProvider implements FallbackProvider {
     @Override
     public String getRoute() {
-        return null;
+        return "*";
     }
 
     @Override
@@ -29,12 +35,12 @@ public class ZuulFallbackProvider implements FallbackProvider {
 
             @Override
             public int getRawStatusCode() throws IOException {
-                return 400;
+                return HttpStatus.BAD_REQUEST.value();
             }
 
             @Override
             public String getStatusText() throws IOException {
-                return "服务超时";
+                return HttpStatus.BAD_REQUEST.getReasonPhrase();
             }
 
             @Override
@@ -44,12 +50,18 @@ public class ZuulFallbackProvider implements FallbackProvider {
 
             @Override
             public InputStream getBody() throws IOException {
-                return null;
+                ResponseVO<String> responseVO = new ResponseVO<>();
+                responseVO.setCode(-1);
+                responseVO.setMsg("服务超时了");
+                responseVO.setData(null);
+                return new ByteArrayInputStream(JSON.toJSONString(responseVO).getBytes());
             }
 
             @Override
             public HttpHeaders getHeaders() {
-                return null;
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+                return httpHeaders;
             }
         };
     }

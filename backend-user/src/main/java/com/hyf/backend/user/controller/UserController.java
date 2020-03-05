@@ -49,7 +49,7 @@ public class UserController {
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public ResponseVO<String> hello(@RequestParam("hello") String hello) throws InterruptedException {
         log.info("请求test...");
-//        Thread.sleep(3000);
+//        Thread.sleep(10000);
         log.info("hello: {}", hello);
         return ResponseVO.ok("hello");
     }

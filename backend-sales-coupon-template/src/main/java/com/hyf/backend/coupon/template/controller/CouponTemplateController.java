@@ -38,7 +38,8 @@ public class CouponTemplateController {
     }
 
     @GetMapping("/getUser")
-    public ResponseVO<String> getUser() {
+    public ResponseVO<String> getUser(HttpServletRequest request) {
+        log.info("request remoteAdder: {}", request.getRemoteAddr());
         ResponseVO<String> hello = userServiceApiClient.hello("haahhahahaha");
         if (hello.isOk()) {
             return hello;
