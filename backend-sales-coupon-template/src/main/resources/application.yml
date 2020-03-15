@@ -20,7 +20,7 @@ spring:
     filters: log4j,wall,mergeStat
     type: com.zaxxer.hikari.HikariDataSource
   main:
-    allow-bean-definition-overriding: true
+    : true
   redis:
     database: 0
     host: 127.0.0.1
@@ -62,6 +62,7 @@ ribbon:
   MaxAutoRetries: 2
   MaxAutoRetriesNextServer: 1
   OkToRetryOnAllOperations: true
+  ServetListRefreshInterval: 3000
 #    com.hyf.backendw
 hystrix:
   command:
@@ -72,6 +73,7 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 10000
+
 logging:
   level:
     com.hyf.backend.coupon.template.feign.UserServiceApiClient: DEBUG
