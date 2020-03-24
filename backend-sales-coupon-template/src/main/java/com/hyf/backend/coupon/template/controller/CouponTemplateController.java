@@ -3,6 +3,7 @@ package com.hyf.backend.coupon.template.controller;
 import com.hyf.backend.common.context.ContextHolder;
 import com.hyf.backend.common.context.RequestContext;
 import com.hyf.backend.coupon.template.feign.UserServiceApiClient;
+import com.hyf.backend.coupon.template.service.BaseTemplateService;
 import com.hyf.backend.utils.common.vo.ResponseVO;
 import com.hyf.backend.utils.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,8 @@ import java.util.Enumeration;
 public class CouponTemplateController {
     @Autowired
     private UserServiceApiClient userServiceApiClient;
+    @Autowired
+    private BaseTemplateService baseTemplateService;
 
     @Value("${test.name:hahaha}")
     private String name;
@@ -41,14 +44,17 @@ public class CouponTemplateController {
 
     @GetMapping("/getUser")
     public ResponseVO<String> getUser(HttpServletRequest request) {
-        log.info("request remoteAdder: {}", request.getRemoteAddr());
-        log.info("uid: {}", ContextHolder.getCurrentContext().get("uid"));
-        ResponseVO<String> hello = userServiceApiClient.hello("haahhahahaha");
-        if (hello.isOk()) {
-            return hello;
-        } else {
-            throw new BizException(-1, hello.getMsg());
-        }
+//        log.info("request remoteAdder: {}", request.getRemoteAddr());
+//        log.info("uid: {}", ContextHolder.getCurrentContext().get("uid"));
+//        ResponseVO<String> hello = userServiceApiClient.hello("haahhahahaha");
+//        if (hello.isOk()) {
+//            return hello;
+//        } else {
+//            throw new BizException(-1, hello.getMsg());
+//        }
+        String user = baseTemplateService.getUser();
+        log.info("data: {}", user);
+        return ResponseVO.ok(user);
     }
 
     @GetMapping("/test")

@@ -7,4 +7,6 @@ package com.hyf.backend.coupon.template.service;
  */
 public interface BaseTemplateService {
 
+    String getUser();
+
 }

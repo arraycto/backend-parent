@@ -20,7 +20,7 @@ public class UserServiceFallback implements FallbackFactory<UserServiceApiClient
         return new UserServiceApiClient() {
             @Override
             public ResponseVO<String> hello(String hello) {
-                return ResponseVO.ok("hystrix fallback");
+                return ResponseVO.error("hystrix fallback");
             }
         };
     }

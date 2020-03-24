@@ -42,11 +42,13 @@ public class UserController {
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public ResponseVO<String> hello(@RequestParam("hello") String hello, HttpServletRequest request) throws InterruptedException {
         String token = request.getHeader("token");
-        log.info("user token: {}", token);
-        log.info("uid: {}", ContextHolder.getCurrentContext().get("uid"));
-        log.info("请求test...");
+//        log.info("user token: {}", token);
+//        log.info("uid: {}", ContextHolder.getCurrentContext().get("uid"));
+//        log.info("请求test...");
 //        Thread.sleep(10000);
         log.info("hello: {}", hello);
-        return ResponseVO.ok("hello");
+
+//        return ResponseVO.ok("hello");
+        throw new BizException("用户服务出现异常");
     }
 }

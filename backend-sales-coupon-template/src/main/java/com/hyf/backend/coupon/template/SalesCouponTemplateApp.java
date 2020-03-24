@@ -3,6 +3,7 @@ package com.hyf.backend.coupon.template;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,6 +21,7 @@ import java.util.concurrent.Executors;
 @EnableScheduling
 @MapperScan(basePackages = {"com.hyf.backend.coupon.template.mapper"})
 @EnableFeignClients(basePackages = {"com.hyf.backend.coupon.template.feign"})
+@EnableCircuitBreaker
 //@EnableApolloConfig
 public class SalesCouponTemplateApp {
     static ThreadLocal<String> threadLocal = new InheritableThreadLocal<>();

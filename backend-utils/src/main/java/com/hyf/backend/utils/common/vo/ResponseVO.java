@@ -46,9 +46,15 @@ public class ResponseVO<T> {
         return responseVO;
     }
 
-    public static ResponseVO<?> error(int code, String msg) {
-        ResponseVO<?> responseVO = new ResponseVO<>();
+    public static ResponseVO error(int code, String msg) {
+        ResponseVO responseVO = new ResponseVO();
         responseVO.setCode(code);
+        responseVO.setMsg(msg);
+        return responseVO;
+    }
+    public static ResponseVO<String> error(String msg) {
+        ResponseVO<String> responseVO = new ResponseVO<>();
+        responseVO.setCode(-1);
         responseVO.setMsg(msg);
         return responseVO;
     }

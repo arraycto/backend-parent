@@ -1,18 +1,20 @@
 server:
-  port: 8081
+  port: 8089
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
 mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:mapper/*.xml
   global-config:
-    id-type: 0
-    db-column-underline: false
-    refresh-mapper: true
+    db-config:
+      id-type: auto
 spring:
   application:
-    name: template-service
+    name: admin-service
   datasource:
     url: jdbc:mysql://127.0.0.1:33061/coupon?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=UTC
     username: huyufei
@@ -38,6 +40,14 @@ spring:
 #  bootstrap:
 #    enabled: true
 #    namespaces: hyf
+backend:
+  storage:
+    active: aliyun
+    aliyun:
+      endpoint: oss-cn-shanghai.aliyuncs.com
+      accessKeyId: LTAI4FnVGgzX538uDb8T736h
+      accessKeySecret: Ak3zrw1Uq5cvokWj7arPCxmeddjqCs
+      bucketName: hyf-coupon
 management:
   endpoints:
     web:
@@ -73,7 +83,7 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 10000
-
-logging:
-  level:
-    com.hyf.backend.coupon.template.feign.UserServiceApiClient: DEBUG
+#调用服务的DEBUG日志
+#logging:
+#  level:
+#    com.hyf.backend.coupon.template.feign.UserServiceApiClient: DEBUG
