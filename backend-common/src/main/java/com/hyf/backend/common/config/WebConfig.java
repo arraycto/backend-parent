@@ -1,6 +1,7 @@
 package com.hyf.backend.common.config;
 
-import com.hyf.backend.common.filter.HttpHeaderParamFilter;
+import com.hyf.backend.common.filter.HttpHeaderAdminCreateIdFilter;
+import com.hyf.backend.common.filter.HttpHeaderUidFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +28,20 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public FilterRegistrationBean<HttpHeaderParamFilter> filterRegistrationBean() {
-        FilterRegistrationBean<HttpHeaderParamFilter> registrationBean = new FilterRegistrationBean<>();
-        HttpHeaderParamFilter httpHeaderParamFilter = new HttpHeaderParamFilter();
+    public FilterRegistrationBean<HttpHeaderUidFilter> httpHeadUidFilter() {
+        FilterRegistrationBean<HttpHeaderUidFilter> registrationBean = new FilterRegistrationBean<>();
+        HttpHeaderUidFilter httpHeaderParamFilter = new HttpHeaderUidFilter();
+        registrationBean.setFilter(httpHeaderParamFilter);
+        List<String> urlPatterns = new ArrayList<>(1);
+        urlPatterns.add("/*");
+        registrationBean.setUrlPatterns(urlPatterns);
+        return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean<HttpHeaderAdminCreateIdFilter> httpAdminIdFilter() {
+        FilterRegistrationBean<HttpHeaderAdminCreateIdFilter> registrationBean = new FilterRegistrationBean<>();
+        HttpHeaderAdminCreateIdFilter httpHeaderParamFilter = new HttpHeaderAdminCreateIdFilter();
         registrationBean.setFilter(httpHeaderParamFilter);
         List<String> urlPatterns = new ArrayList<>(1);
         urlPatterns.add("/*");

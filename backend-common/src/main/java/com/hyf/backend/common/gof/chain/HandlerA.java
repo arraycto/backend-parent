@@ -1,0 +1,13 @@
+package com.hyf.backend.common.gof.chain;
+
+/**
+ * @Author: Elvis on 2020/3/25
+ * @Email: yfelvis@gmail.com
+ * @Desc: TODO
+ */
+public class HandlerA extends Handler {
+    @Override
+    protected void doHandle() {
+        System.out.println("A责任链执行");
+    }
+}

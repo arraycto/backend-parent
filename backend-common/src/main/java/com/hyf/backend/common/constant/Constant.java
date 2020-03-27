@@ -10,6 +10,9 @@ public class Constant {
     //kafka消息的topic
     public static final String TOPIC = "user_coupon_op";
 
+    public static final String X_UID = "x-uid";
+    public static final String X_ADMIN_UID = "x-admin-uid";
+
     public static class RedisPrefix {
 
         //优惠券码的前缀

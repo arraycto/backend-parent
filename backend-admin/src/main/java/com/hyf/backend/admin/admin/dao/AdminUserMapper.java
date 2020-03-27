@@ -2,6 +2,8 @@ package com.hyf.backend.admin.admin.dao;
 
 import com.hyf.backend.admin.admin.dataobject.AdminUserDO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -22,4 +24,13 @@ public interface AdminUserMapper {
     int updateByIdSelective(AdminUserDO admin);
 
     List<AdminUserDO> selectAdminByUserName(@Param("username") String username);
+
+    void insert(AdminUserDO adminUserDO);
+
+
+    @Select("select * from admin_user where id = #{id}")
+    AdminUserDO selectById(@Param("id") Integer id);
+
+    @Update("update admin_user set deleted = 1 where id = #{id}")
+    int deleteById(@Param("id") Integer id);
 }

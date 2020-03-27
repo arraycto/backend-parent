@@ -86,4 +86,4 @@ hystrix:
 #调用服务的DEBUG日志
 #logging:
 #  level:
-#    com.hyf.backend.coupon.template.feign.UserServiceApiClient: DEBUG
+#    com.hyf.backend.coupon.com.hyf.backend.coupon.template.feign.UserServiceApiClient: DEBUG

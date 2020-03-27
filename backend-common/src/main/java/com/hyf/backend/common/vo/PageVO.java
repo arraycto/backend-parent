@@ -1,6 +1,6 @@
 package com.hyf.backend.common.vo;
 
-import com.hyf.backend.common.domain.PageList;
+import com.hyf.backend.common.domain.PageListBO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,9 +30,10 @@ public class PageVO<T> extends ListVO<T> {
         super(list);
         this.pageSize = pageSize;
         this.pageNo = pageNo;
+        this.total = total;
     }
 
-    public <I> PageVO(PageList<I> pageList, Function<? super I, ? extends T> mapper) {
+    public <I> PageVO(PageListBO<I> pageList, Function<? super I, ? extends T> mapper) {
         this(pageList.getList().stream().map(mapper).collect(Collectors.toList()),
                 pageList.getPageSize(),
                 pageList.getPageNo(),

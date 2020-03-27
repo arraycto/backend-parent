@@ -157,13 +157,16 @@ public class PermissionUtil {
             }
             Class<?> controllerClazz = bean.getClass().getSuperclass();
             RequestMapping annotation = AnnotationUtils.findAnnotation(controllerClazz, RequestMapping.class);
-            String baseApi = annotation.value()[0];
+            String baseApi = "";
+            if (annotation != null) {
+                baseApi = annotation.value()[0];
+            }
             List<Method> methodsListWithAnnotation = MethodUtils.getMethodsListWithAnnotation(controllerClazz, RequiresPermissions.class);
             for (Method method : methodsListWithAnnotation) {
                 String api = "";
                 RequiresPermissions requiresPermissions = AnnotationUtils.getAnnotation(method, RequiresPermissions.class);
                 RequiresPermissionsDesc requiresPermissionsDesc = AnnotationUtils.getAnnotation(method, RequiresPermissionsDesc.class);
-                if(requiresPermissions == null || requiresPermissionsDesc == null) {
+                if (requiresPermissions == null || requiresPermissionsDesc == null) {
                     continue;
                 }
 
@@ -172,14 +175,14 @@ public class PermissionUtil {
                 permission.setRequiresPermissionsDesc(requiresPermissionsDesc);
 
                 GetMapping getMapping = AnnotationUtils.getAnnotation(method, GetMapping.class);
-                if(getMapping != null) {
+                if (getMapping != null) {
                     api = "GET " + baseApi + getMapping.value()[0];
                     permission.setApi(api);
                     list.add(permission);
                     continue;
                 }
                 PostMapping postMapping = AnnotationUtils.getAnnotation(method, PostMapping.class);
-                if(postMapping != null) {
+                if (postMapping != null) {
                     api = "POST " + baseApi + postMapping.value()[0];
                     permission.setApi(api);
                     list.add(permission);

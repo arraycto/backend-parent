@@ -8,6 +8,8 @@ import com.hyf.backend.admin.admin.dataobject.AdminUserDO;
 import com.hyf.backend.admin.admin.service.AdminPermissionService;
 import com.hyf.backend.admin.admin.service.AdminRoleService;
 import com.hyf.backend.admin.admin.service.AdminUserService;
+import com.hyf.backend.common.constant.Constant;
+import com.hyf.backend.common.context.ContextHolder;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -85,6 +87,8 @@ public class AdminAuthorizingRealm extends AuthorizingRealm {
         if (!encoder.matches(password, adminUserDO.getPassword())) {
             throw new UnknownAccountException("找不到用户（" + username + "）的帐号信息");
         }
+        //添加用户ID
+        ContextHolder.getCurrentContext().add(Constant.X_ADMIN_UID, String.valueOf(adminUserDO.getId()));
 
         return new SimpleAuthenticationInfo(adminUserDO, password, getName());
     }

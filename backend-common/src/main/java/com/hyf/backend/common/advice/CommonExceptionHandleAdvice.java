@@ -39,4 +39,10 @@ public class CommonExceptionHandleAdvice {
         String errMsg = allErrors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(","));
         return ResponseVO.error(-3, errMsg);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseVO handleException(Exception e) {
+        log.error("未知异常:  exception:", e);
+        return ResponseVO.error(e.getMessage());
+    }
 }
