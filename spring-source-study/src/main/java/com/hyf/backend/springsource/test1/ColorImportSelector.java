@@ -6,6 +6,7 @@ import org.springframework.core.type.AnnotationMetadata;
 public class ColorImportSelector implements ImportSelector {
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+
         return new String[]{White.class.getName(), Black.class.getName()};
     }
 }
