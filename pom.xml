@@ -16,7 +16,8 @@
         <module>backend-admin</module>
 		<module>backend-sales-coupon-template/backend-sales-coupon-template-api</module>
 		<module>backend-sales-coupon-template/backend-sales-coupon-template-impl</module>
-	</modules>
+        <module>spring-source-study</module>
+    </modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>

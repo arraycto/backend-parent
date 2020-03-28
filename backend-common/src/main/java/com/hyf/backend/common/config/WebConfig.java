@@ -2,11 +2,13 @@ package com.hyf.backend.common.config;
 
 import com.hyf.backend.common.filter.HttpHeaderAdminCreateIdFilter;
 import com.hyf.backend.common.filter.HttpHeaderUidFilter;
+import com.hyf.backend.common.web.LoginRequiredInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
@@ -25,6 +27,11 @@ public class WebConfig implements WebMvcConfigurer {
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.clear();
         converters.add(new MappingJackson2HttpMessageConverter());
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginRequiredInterceptor()).addPathPatterns("/api/**");
     }
 
     @Bean
