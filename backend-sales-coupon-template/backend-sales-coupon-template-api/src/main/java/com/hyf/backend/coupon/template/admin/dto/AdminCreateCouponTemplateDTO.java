@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: Elvis on 2020/3/26
@@ -25,15 +26,17 @@ public class AdminCreateCouponTemplateDTO {
     private Integer eachGetLimitation;
     @NotNull(message = "优惠券折扣分类不能为空")
     private Integer discountCategory;
+    private Integer manjianQuota;
+    private Integer lijianQuota;
+    private Integer zhekouQuota;
     private String dispatchUsers;
-    private Integer discountQuota;
     private Integer discountBase;
     @NotNull(message = "有效期规则不能为空")
     private Integer expirationCode;
     private Integer expirationGap;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date expirationDeadline;
-    private String goodsTypeLimitation;
-    private String weight;
+    private List<Integer> goodsTypeLimitation;
+    private List<String> weight;
 
 }

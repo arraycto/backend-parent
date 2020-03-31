@@ -72,8 +72,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-
-
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
@@ -226,6 +224,14 @@
 				<artifactId>qiniu-java-sdk</artifactId>
 				<version>[7.2.0, 7.2.99]</version>
 			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/org.apache.rocketmq/rocketmq-spring-boot-starter -->
+			<dependency>
+				<groupId>org.apache.rocketmq</groupId>
+				<artifactId>rocketmq-spring-boot-starter</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

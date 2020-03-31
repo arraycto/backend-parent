@@ -6,6 +6,7 @@ import lombok.experimental.Accessors;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: Elvis on 2020/3/26
@@ -59,7 +60,11 @@ public class CouponTemplateBO {
     /**
      * 折扣表示折扣了多少如85折，满减表示满减了多少比如100，立减表示立减了多少
      */
-    private Integer discountQuota;
+    private Integer manjianQuota;
+
+    private Integer lijianQuota;
+
+    private Integer zhekouQuota;
 
     /**
      * 满减基准
@@ -74,12 +79,12 @@ public class CouponTemplateBO {
     /**
      * 商品类型限制范围
      */
-    private String goodsTypeLimitation;
+    private List<Integer> goodsTypeLimitation;
 
     /**
      * 可以和哪些优惠券一起叠加使用，同一类优惠券不能叠加使用
      */
-    private String weight;
+    private List<String> weight;
 
     private Date createTime;
 
@@ -87,6 +92,14 @@ public class CouponTemplateBO {
 
     public CouponTemplateBO(CouponTemplateDO salesCouponTemplateDO) {
         BeanUtils.copyProperties(salesCouponTemplateDO, this);
+        if (salesCouponTemplateDO.getDiscountCategory() != null) {
+            this.discountCategory = salesCouponTemplateDO.getDiscountCategory().getCode();
+        }
+        if (salesCouponTemplateDO.getExpirationCode() != null) {
+            this.expirationCode = salesCouponTemplateDO.getExpirationCode().getCode();
+        }
+
+
 //        this.goodsTypeLimitation = JSON.parseArray(salesCouponTemplateDO.getGoodsTypeLimitation(), Integer.class);
 //        this.weight = JSON.parseArray(salesCouponTemplateDO.getWeight(), Integer.class);
     }

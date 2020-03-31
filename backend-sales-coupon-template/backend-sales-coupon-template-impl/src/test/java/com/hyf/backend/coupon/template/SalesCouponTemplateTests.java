@@ -9,13 +9,14 @@ import com.hyf.backend.coupon.template.constant.CouponTemplateExpirationEnum;
 import com.hyf.backend.coupon.template.dataobject.CouponTemplateDO;
 import com.hyf.backend.coupon.template.dataobject.CouponTemplateDOExample;
 import com.hyf.backend.coupon.template.mapper.CouponTemplateDOMapper;
-import org.joda.convert.ToString;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -27,8 +28,10 @@ import java.util.List;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class SalesCouponTemplateTests {
-    @Autowired
+    @Autowired(required = false)
     private CouponTemplateDOMapper templateMapper;
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
 
     @Test
     public void test1() {
@@ -48,12 +51,13 @@ public class SalesCouponTemplateTests {
         salesCouponTemplateDO.setManjianQuota(20);
         salesCouponTemplateDO.setDiscountBase(50);
         salesCouponTemplateDO.setEachGetLimitation(20);
-        salesCouponTemplateDO.setGoodsTypeLimitation("1,2,3,4,5");
-        salesCouponTemplateDO.setWeight("1,2,3");
+//        salesCouponTemplateDO.setGoodsTypeLimitation("1,2,3,4,5");
+//        salesCouponTemplateDO.setWeight("1,2,3");
 
         templateMapper.insertSelective(salesCouponTemplateDO);
 //        templateMapper.insert(salesCouponTemplateDO);
     }
+
     @Test
     public void testUpdate() {
         CouponTemplateDO toUpdate = new CouponTemplateDO();
@@ -88,5 +92,16 @@ public class SalesCouponTemplateTests {
 //
         List<Integer> integers = JSON.parseArray("[1,2,3,4]", Integer.class);
         System.out.println(integers);
+    }
+
+    @Test
+    public void testSendMsg() {
+        rocketMQTemplate.convertAndSend("test-topic:test-tag", "hello this is test msg payload tag!!!");
+//        rocketMQTemplate.send
+    }
+
+    @Test
+    public void testConsumer() throws IOException {
+        System.in.read();
     }
 }

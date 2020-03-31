@@ -1,6 +1,7 @@
 package com.hyf.backend.coupon.template.controller.admin;
 
 import com.hyf.backend.common.domain.PageListBO;
+import com.hyf.backend.common.vo.ListVO;
 import com.hyf.backend.common.vo.PageVO;
 import com.hyf.backend.coupon.template.admin.AdminCouponTemplateApi;
 import com.hyf.backend.coupon.template.admin.dto.AdminCreateCouponTemplateDTO;
@@ -54,5 +55,15 @@ public class AdminCouponTemplateController implements AdminCouponTemplateApi {
                 couponTemplateBOPageListBO.getTotal()));
     }
 
-
+    @Override
+    public ResponseVO<ListVO<AdminCouponTemplateVO>> listCouponTemplateAll() {
+        List<CouponTemplateBO> list = couponTemplateService.listCouponTemplateAll();
+        List<AdminCouponTemplateVO> res = new ArrayList<>();
+        for (CouponTemplateBO couponTemplateBO : list) {
+            AdminCouponTemplateVO adminCouponTemplateVO = new AdminCouponTemplateVO();
+            BeanUtils.copyProperties(couponTemplateBO, adminCouponTemplateVO);
+            res.add(adminCouponTemplateVO);
+        }
+        return ResponseVO.ok(new ListVO<>(res));
+    }
 }

@@ -1,5 +1,6 @@
 package com.hyf.backend.coupon.template.admin;
 
+import com.hyf.backend.common.vo.ListVO;
 import com.hyf.backend.common.vo.PageVO;
 import com.hyf.backend.coupon.template.admin.dto.AdminCreateCouponTemplateDTO;
 import com.hyf.backend.coupon.template.admin.dto.AdminQueryCouponTemplateDTO;
@@ -22,4 +23,7 @@ public interface AdminCouponTemplateApi {
 
     @PostMapping("/list")
     ResponseVO<PageVO<AdminCouponTemplateVO>> listCouponTemplate(@RequestBody @Validated AdminQueryCouponTemplateDTO queryCouponTemplateDTO);
+
+    @PostMapping("/list-all")
+    ResponseVO<ListVO<AdminCouponTemplateVO>> listCouponTemplateAll() ;
 }

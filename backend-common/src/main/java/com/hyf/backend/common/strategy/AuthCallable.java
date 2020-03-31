@@ -20,6 +20,7 @@ public class AuthCallable<V> implements Callable<V> {
     @Override
     public V call() throws Exception {
         try {
+            //这里是HystrixCommand中的线程了
             ContextHolder.setCurrentContext(requestContext);
             return this.delegate.call();
         } catch (Exception | Error ex) {

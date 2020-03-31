@@ -38,6 +38,10 @@ zuul:
     eager-load:
       enabled: true
   ribbon-isolation-strategy: thread
+  thread-pool:
+    use-separate-thread-pools: true
+    #让每一个路由在单独的线程池中隔离
+#  使用线程池的隔离方式
 ###Hystrix的超时时间要大于Ribbon否则还没到Ribbon重试，就被Hystrix给熔断了
 hystrix:
   command:

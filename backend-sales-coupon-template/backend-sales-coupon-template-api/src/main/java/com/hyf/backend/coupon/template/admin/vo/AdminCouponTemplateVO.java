@@ -1,10 +1,12 @@
 package com.hyf.backend.coupon.template.admin.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: Elvis on 2020/3/26
@@ -13,6 +15,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
+@JsonInclude(value = JsonInclude.Include.NON_ABSENT)
 public class AdminCouponTemplateVO {
     private Long id;
 
@@ -66,6 +69,11 @@ public class AdminCouponTemplateVO {
      */
     private Integer discountBase;
 
+    private Integer manjianQuota;
+
+    private Integer lijianQuota;
+
+    private Integer zhekouQuota;
     /**
      * 每人领取优惠券限制
      */
@@ -74,12 +82,12 @@ public class AdminCouponTemplateVO {
     /**
      * 商品类型限制范围
      */
-    private String goodsTypeLimitation;
+    private List<Integer> goodsTypeLimitation;
 
     /**
      * 可以和哪些优惠券一起叠加使用，同一类优惠券不能叠加使用
      */
-    private String weight;
+    private List<String> weight;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;

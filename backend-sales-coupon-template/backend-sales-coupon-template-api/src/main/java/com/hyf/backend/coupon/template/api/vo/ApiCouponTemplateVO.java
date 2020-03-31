@@ -1,10 +1,9 @@
-package com.hyf.backend.coupon.template.vo;
+package com.hyf.backend.coupon.template.api.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.hyf.backend.coupon.template.bo.CouponTemplateBO;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +15,8 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-public class CouponTemplateVO {
+@JsonInclude(value = JsonInclude.Include.NON_ABSENT)
+public class ApiCouponTemplateVO {
     private Long id;
 
     private Boolean isAvailable;
@@ -69,6 +69,11 @@ public class CouponTemplateVO {
      */
     private Integer discountBase;
 
+    private Integer manjianQuota;
+
+    private Integer lijianQuota;
+
+    private Integer zhekouQuota;
     /**
      * 每人领取优惠券限制
      */
@@ -82,14 +87,12 @@ public class CouponTemplateVO {
     /**
      * 可以和哪些优惠券一起叠加使用，同一类优惠券不能叠加使用
      */
-    private List<Integer> weight;
+    private List<String> weight;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
-    public CouponTemplateVO(CouponTemplateBO couponTemplateBO) {
-        BeanUtils.copyProperties(couponTemplateBO, this);
-    }
+
 }

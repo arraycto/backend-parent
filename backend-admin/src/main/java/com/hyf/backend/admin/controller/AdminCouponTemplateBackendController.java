@@ -2,6 +2,7 @@ package com.hyf.backend.admin.controller;
 
 import com.hyf.backend.admin.annotation.RequiresPermissionsDesc;
 import com.hyf.backend.admin.feign.AdminCouponTemplateClient;
+import com.hyf.backend.common.vo.ListVO;
 import com.hyf.backend.common.vo.PageVO;
 import com.hyf.backend.coupon.template.admin.dto.AdminCreateCouponTemplateDTO;
 import com.hyf.backend.coupon.template.admin.dto.AdminQueryCouponTemplateDTO;
@@ -49,6 +50,16 @@ public class AdminCouponTemplateBackendController {
             return pageVOResponseVO;
         } else {
             return ResponseVO.error(pageVOResponseVO.getMsg());
+        }
+    }
+
+    @GetMapping("/list-all")
+    public ResponseVO listAdminCouponTemplateAll() {
+        ResponseVO<ListVO<AdminCouponTemplateVO>> listVOResponseVO = adminCouponTemplateClient.listCouponTemplateAll();
+        if (listVOResponseVO.isOk()) {
+            return listVOResponseVO;
+        } else {
+            return ResponseVO.error(listVOResponseVO.getMsg());
         }
     }
 }

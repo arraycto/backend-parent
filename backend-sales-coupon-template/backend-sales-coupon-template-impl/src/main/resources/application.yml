@@ -4,6 +4,9 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+  instance:
+    metadata-map:
+      version: 1
 mybatis-plus:
 #  mapper-locations: classpath*:mapper/*.xml
   global-config:
@@ -75,6 +78,10 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 10000
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: test-topic-producer-group
 
 logging:
   level:

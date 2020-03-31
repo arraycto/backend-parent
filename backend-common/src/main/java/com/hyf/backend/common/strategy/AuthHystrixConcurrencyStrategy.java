@@ -23,6 +23,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 利用装饰模式解决Hystrix跨线程的问题
  * 解决线程池模式ThreadLocal问题
  *
  */
@@ -85,6 +86,7 @@ public class AuthHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy {
         if (wrappedCallable instanceof AuthCallable) {
             return wrappedCallable;
         }
+        //注意此时还没变成HystrixCommand线程
         RequestContext requestContext = ContextHolder.getCurrentContext();
         return new AuthCallable<>(wrappedCallable, requestContext);
     }

@@ -31,6 +31,12 @@ public class AdminCouponTemplateFallbackFactory implements FallbackFactory<Admin
                 log.error("调用优惠券模板服务出错啦...params: {}", JSON.toJSONString(queryCouponTemplateDTO), cause);
                 return ResponseVO.error(cause.getMessage());
             }
+
+            @Override
+            public ResponseVO listCouponTemplateAll() {
+                log.error("调用优惠券模板服务出错啦...");
+                return ResponseVO.error(cause.getMessage());
+            }
         };
     }
 }

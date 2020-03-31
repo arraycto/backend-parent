@@ -31,10 +31,10 @@ public class AdminUserController {
     @Autowired
     private AdminUserService adminUserService;
 
-    @PostMapping("/list")
+    @GetMapping("/list")
     @RequiresPermissions("admin:admin:list")
     @RequiresPermissionsDesc(menu = {"系统管理", "管理员管理"}, button = "查询")
-    public ResponseVO<AdminUserPageVO> listAdminUser(@RequestBody AdminUserQueryPageDTO adminUserQueryPageDTO) {
+    public ResponseVO<AdminUserPageVO> listAdminUser(AdminUserQueryPageDTO adminUserQueryPageDTO) {
         return ResponseVO.ok(new AdminUserPageVO(adminUserService.getAdminUserByPage(adminUserQueryPageDTO)));
     }
 
