@@ -44,4 +44,12 @@ public class PageListBO<T> {
         this.total = totalCnt;
     }
 
+    public PageListBO(List<T> list, Integer pageNo, Integer pageSize, Long total) {
+        this.list = list;
+        this.total = total;
+        this.pageNo = pageNo;
+        this.pageSize = pageSize;
+    }
+
+
 }

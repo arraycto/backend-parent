@@ -4,12 +4,17 @@ import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hyf.backend.common.mybatis.mapper.MapperHelper;
 import com.hyf.backend.coupon.template.admin.dto.AdminQueryCouponTemplateDTO;
+import com.hyf.backend.coupon.template.bo.UserCouponBO;
 import com.hyf.backend.coupon.template.constant.CouponDiscountCategoryEnum;
 import com.hyf.backend.coupon.template.constant.CouponTemplateExpirationEnum;
+import com.hyf.backend.coupon.template.constant.UserCouponStatusEnum;
 import com.hyf.backend.coupon.template.dataobject.CouponTemplateDO;
 import com.hyf.backend.coupon.template.dataobject.CouponTemplateDOExample;
 import com.hyf.backend.coupon.template.mapper.CouponTemplateDOMapper;
+import com.hyf.backend.coupon.template.service.UserCouponCacheService;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +37,8 @@ public class SalesCouponTemplateTests {
     private CouponTemplateDOMapper templateMapper;
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
+    @Autowired
+    private UserCouponCacheService userCouponCacheService;
 
     @Test
     public void test1() {
@@ -101,7 +108,41 @@ public class SalesCouponTemplateTests {
     }
 
     @Test
+    public void testGetRedisPage() {
+        for (int i = 0; i < 12; i++) {
+            UserCouponBO userCouponBO = new UserCouponBO()
+                    .setId(RandomUtils.nextLong(1, 100000))
+                    .setUserId(1L)
+                    .setGetTime(new DateTime().plusSeconds(i).toDate())
+                    .setStatus(UserCouponStatusEnum.USABLE);
+            userCouponCacheService.addCoupon(1L, UserCouponStatusEnum.USABLE.getCode(), userCouponBO);
+        }
+    }
+
+    @Test
+    public void testGetRedisPage1() {
+//        List<UserCouponBO> userCouponPage = userCouponCacheService.getUserCouponPage(1L, UserCouponStatusEnum.USABLE.getCode(), 1, 5);
+//        System.out.println(userCouponPage);
+    }
+
+    @Test
     public void testConsumer() throws IOException {
         System.in.read();
+    }
+
+    static class C1 {
+        public static Integer a = 1;
+    }
+
+    static class C2 extends C1 {
+        public static Integer b = 2;
+
+        static {
+            System.out.println(a);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(C2.b);
     }
 }

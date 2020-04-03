@@ -1,9 +1,6 @@
 package com.hyf.backend.coupon.template.controller;
 
-import com.hyf.backend.common.domain.PageListBO;
-import com.hyf.backend.common.domain.QueryPageDTO;
 import com.hyf.backend.common.vo.ListVO;
-import com.hyf.backend.common.vo.PageVO;
 import com.hyf.backend.coupon.template.api.dto.ApiQueryIdsDTO;
 import com.hyf.backend.coupon.template.api.vo.ApiCouponTemplateVO;
 import com.hyf.backend.coupon.template.bo.CouponTemplateBO;
@@ -78,17 +75,18 @@ public class CouponTemplateController {
     }
 
     @PostMapping("/list-available")
-    public ResponseVO<PageVO<ApiCouponTemplateVO>> listAvailableCouponTemplate(@RequestBody QueryPageDTO queryPageDTO) {
-        PageListBO<CouponTemplateBO> availableCouponTemplate =
-                couponTemplateService.findAvailableCouponTemplate(queryPageDTO);
-        List<CouponTemplateBO> list = availableCouponTemplate.getList();
-        List<ApiCouponTemplateVO> voList = new ArrayList<>(list.size());
-        for (CouponTemplateBO couponTemplateBO : list) {
+    public ListVO<ApiCouponTemplateVO> listAvailableCouponTemplate() {
+        List<CouponTemplateBO> availableCouponTemplate =
+                couponTemplateService.findAvailableCouponTemplate(null);
+
+        List<ApiCouponTemplateVO> voList = new ArrayList<>(availableCouponTemplate.size());
+        for (CouponTemplateBO couponTemplateBO : availableCouponTemplate) {
             ApiCouponTemplateVO apiCouponTemplateVO = new ApiCouponTemplateVO();
             BeanUtils.copyProperties(couponTemplateBO, apiCouponTemplateVO);
             voList.add(apiCouponTemplateVO);
         }
-        return ResponseVO.ok(new PageVO<>(voList, availableCouponTemplate.getPageSize(), availableCouponTemplate.getPageNo(), availableCouponTemplate.getTotal()));
+        return new ListVO<>(voList);
+//        return ResponseVO.ok(new PageVO<>(voList, availableCouponTemplate.getPageSize(), availableCouponTemplate.getPageNo(), availableCouponTemplate.getTotal()));
     }
 
     @PostMapping("/list-by-ids")

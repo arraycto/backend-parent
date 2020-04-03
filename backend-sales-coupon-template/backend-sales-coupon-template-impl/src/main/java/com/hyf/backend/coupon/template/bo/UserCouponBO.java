@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -19,7 +20,7 @@ import java.util.Date;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCouponBO {
+public class UserCouponBO implements Serializable {
 
     private Long id;
 
@@ -34,6 +35,8 @@ public class UserCouponBO {
     private UserCouponStatusEnum status;
 
     private CouponTemplateBO couponTemplateBO;
+
+    private Integer effectDays;
 
 
     public UserCouponBO(UserCouponDO userCouponDO) {

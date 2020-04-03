@@ -20,8 +20,10 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
  */
 @Service("templateService")
 @Slf4j
+@Validated
 public class TemplateServiceImpl implements CouponTemplateService {
     @Resource
     private CouponTemplateDOMapper couponTemplateMapper;
@@ -73,16 +76,17 @@ public class TemplateServiceImpl implements CouponTemplateService {
     }
 
     @Override
-    public PageListBO<CouponTemplateBO> findAvailableCouponTemplate(QueryPageDTO queryPageDTO) {
+    public List<CouponTemplateBO> findAvailableCouponTemplate(QueryPageDTO queryPageDTO) {
         CouponTemplateDOExample example = new CouponTemplateDOExample();
         CouponTemplateDOExample.Criteria criteria = example.createCriteria().andIsAvailableEqualTo(true)
                 .andIsExpiredEqualTo(false);
-        PageListBO<CouponTemplateDO> couponTemplateDOPageListBO = MapperHelper.selectPageByExample(couponTemplateMapper, example, queryPageDTO.toPage());
-        return new PageListBO<>(couponTemplateDOPageListBO, CouponTemplateBO::new);
+        List<CouponTemplateDO> couponTemplateDOS = couponTemplateMapper.selectByExample(example);
+        return couponTemplateDOS.stream().map(CouponTemplateBO::new).collect(Collectors.toList());
+//
     }
 
     @Override
-    public List<CouponTemplateBO> findByIds(ApiQueryIdsDTO apiQueryIdsDTO) {
+    public List<CouponTemplateBO> findByIds(@Valid ApiQueryIdsDTO apiQueryIdsDTO) {
         CouponTemplateDOExample example = new CouponTemplateDOExample();
         example.createCriteria().andIdIn(apiQueryIdsDTO.getIds());
         List<CouponTemplateDO> couponTemplateDOS = couponTemplateMapper.selectByExample(example);

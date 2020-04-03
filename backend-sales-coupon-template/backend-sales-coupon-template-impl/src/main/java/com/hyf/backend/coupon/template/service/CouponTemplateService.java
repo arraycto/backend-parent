@@ -8,6 +8,7 @@ import com.hyf.backend.coupon.template.admin.dto.ApiQueryCouponTemplateDTO;
 import com.hyf.backend.coupon.template.api.dto.ApiQueryIdsDTO;
 import com.hyf.backend.coupon.template.bo.CouponTemplateBO;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public interface CouponTemplateService {
 
     List<CouponTemplateBO> listCouponTemplateAll();
 
-    PageListBO<CouponTemplateBO> findAvailableCouponTemplate(QueryPageDTO queryPageDTO);
+    List<CouponTemplateBO> findAvailableCouponTemplate(QueryPageDTO queryPageDTO);
 
-    List<CouponTemplateBO> findByIds(ApiQueryIdsDTO apiQueryIdsDTO);
+    List<CouponTemplateBO> findByIds(@Valid ApiQueryIdsDTO apiQueryIdsDTO);
 }

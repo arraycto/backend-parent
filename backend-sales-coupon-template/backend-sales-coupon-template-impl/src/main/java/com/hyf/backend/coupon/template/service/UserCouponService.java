@@ -2,7 +2,10 @@ package com.hyf.backend.coupon.template.service;
 
 import com.hyf.backend.common.domain.PageListBO;
 import com.hyf.backend.common.domain.QueryPageDTO;
+import com.hyf.backend.coupon.template.bo.CouponTemplateBO;
 import com.hyf.backend.coupon.template.bo.UserCouponBO;
+
+import java.util.List;
 
 /**
  * @Author: Elvis on 2020/3/31
@@ -20,13 +23,15 @@ public interface UserCouponService {
 
     /**
      * 根据用户ID查找可以领取的优惠券模板
+     *
      * @param uid
      * @return
      */
-    PageListBO<UserCouponBO> findAvailableTemplate(Long uid);
+    List<CouponTemplateBO> findAvailableTemplate(Long uid, QueryPageDTO queryPageDTO);
 
     /**
      * 用户领取优惠券
+     *
      * @param userId
      * @param templateId
      * @return

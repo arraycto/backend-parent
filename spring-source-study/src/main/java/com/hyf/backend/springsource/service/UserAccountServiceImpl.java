@@ -25,6 +25,12 @@ public class UserAccountServiceImpl implements UserAccountService {
         updateAccount(transferDTO.getToUserId(), transferDTO.getAmount(), "IN");
     }
 
+    @Transactional
+    @Override
+    public void testTransaction() {
+        throw new RuntimeException("假装抛出异常");
+    }
+
     private void updateAccount(Integer userId, Integer amount, String type) {
         if (type.equals("OUT")) {
             UserAccount userAccount = userAccountMapper.selectByUserId(userId);

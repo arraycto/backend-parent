@@ -1,6 +1,7 @@
 package com.hyf.backend.springsource;
 
 import com.hyf.backend.springsource.dto.TransferDTO;
+import com.hyf.backend.springsource.service.TestTransactionService;
 import com.hyf.backend.springsource.service.UserAccountService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +25,13 @@ public class SpringSourceAppTests {
 
     @Autowired
     private UserAccountService userAccountService;
+    @Autowired
+    public TestTransactionService testTransactionService;
 
+    @Test
+    public void testTransaction() {
+        testTransactionService.test1();
+    }
     @Test
     public void test() throws InterruptedException {
         TransferDTO dto = new TransferDTO();

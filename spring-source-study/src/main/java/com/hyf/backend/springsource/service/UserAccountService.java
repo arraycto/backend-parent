@@ -10,4 +10,6 @@ import com.hyf.backend.springsource.dto.TransferDTO;
 public interface UserAccountService {
 
     void transfer(TransferDTO transferDTO);
+
+    void testTransaction();
 }
