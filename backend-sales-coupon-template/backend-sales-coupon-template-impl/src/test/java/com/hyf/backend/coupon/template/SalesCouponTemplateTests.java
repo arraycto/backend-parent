@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -115,7 +116,7 @@ public class SalesCouponTemplateTests {
                     .setUserId(1L)
                     .setGetTime(new DateTime().plusSeconds(i).toDate())
                     .setStatus(UserCouponStatusEnum.USABLE);
-            userCouponCacheService.addCoupon(1L, UserCouponStatusEnum.USABLE.getCode(), userCouponBO);
+            userCouponCacheService.addCoupon(1L, UserCouponStatusEnum.USABLE.getCode(), Collections.singletonList(userCouponBO));
         }
     }
 

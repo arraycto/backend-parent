@@ -7,15 +7,15 @@ package com.hyf.backend.coupon.template.constant;
  */
 public class UserCouponCacheKey {
 
-    public static final String USER_COUPON_USABLE_CACHE = "user_coupon_${uid}_usable";
+    public static final String USER_COUPON_USABLE_CACHE = "user_coupon_%s_usable";
 
-    public static final String USER_COUPON_USED_CACHE = "user_coupon_${uid}_used";
+    public static final String USER_COUPON_USED_CACHE = "user_coupon_%s_used";
 
-    public static final String USER_COUPON_EXPIRED_CACHE = "user_coupon_${uid}_expired";
+    public static final String USER_COUPON_EXPIRED_CACHE = "user_coupon_%s_expired";
 
-    public static final String USER_COUPON_USABLE_CACHE_ZSET = "user_coupon_${uid}_usable_zset";
+    public static final String USER_COUPON_USABLE_CACHE_ZSET = "user_coupon_%s_usable_zset";
 
-    public static final String USER_COUPON_USED_CACHE_ZSET = "user_coupon_${uid}_used_zset";
+    public static final String USER_COUPON_USED_CACHE_ZSET = "user_coupon_%s_used_zset";
 
-    public static final String USER_COUPON_EXPIRED_CACHE_ZSET = "user_coupon_${uid}_expired_zset";
+    public static final String USER_COUPON_EXPIRED_CACHE_ZSET = "user_coupon_%s_expired_zset";
 }

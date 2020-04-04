@@ -33,7 +33,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginRequiredInterceptor()).addPathPatterns("/api/**");
+        registry.addInterceptor(new LoginRequiredInterceptor()).addPathPatterns("/**");
     }
 
     @Override

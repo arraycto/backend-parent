@@ -11,6 +11,7 @@ public class Constant {
     public static final String TOPIC = "user_coupon_op";
 
     public static final String X_UID = "x-uid";
+    public static final String X_TOKEN = "x-token";
     public static final String X_ADMIN_UID = "x-admin-uid";
 
     public static class RedisPrefix {

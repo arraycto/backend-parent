@@ -10,6 +10,6 @@ import org.springframework.cloud.openfeign.FeignClient;
  * @Email: yfelvis@gmail.com
  * @Desc: TODO
  */
-@FeignClient(value = "template-service", fallbackFactory = AdminCouponTemplateFallbackFactory.class, configuration = AdminFeignConfig.class)
+@FeignClient(value = "template-service", fallbackFactory = AdminCouponTemplateFallbackFactory.class, path = "/template-service", configuration = AdminFeignConfig.class)
 public interface AdminCouponTemplateClient extends AdminCouponTemplateApi {
 }

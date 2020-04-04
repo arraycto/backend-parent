@@ -3,6 +3,7 @@ package com.hyf.backend.common.mybatis.interceptor;
 import com.hyf.backend.common.constant.Constant;
 import com.hyf.backend.common.context.ContextHolder;
 import com.hyf.backend.common.domain.DateAndAuthorTraceable;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -33,15 +34,18 @@ public class TimeAndAuthorTraceableInterceptor implements Interceptor {
             DateAndAuthorTraceable traceable = (DateAndAuthorTraceable) arg;
             SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
             Date time = new Date();
-            Integer adminUserId = Integer.valueOf(ContextHolder.getCurrentContext().get(Constant.X_ADMIN_UID));
-            if (sqlCommandType.equals(SqlCommandType.INSERT)) {
-                traceable.setCreateUser(adminUserId);
-                traceable.setUpdateUser(adminUserId);
-                traceable.setCreateTime(time);
-                traceable.setUpdateTime(time);
-            } else if (sqlCommandType.equals(SqlCommandType.UPDATE)) {
-                traceable.setUpdateUser(adminUserId);
-                traceable.setUpdateTime(time);
+            String s = ContextHolder.getCurrentContext().get(Constant.X_ADMIN_UID);
+            if(StringUtils.isNotEmpty(s)) {
+                Integer adminUserId = Integer.valueOf(s);
+                if (sqlCommandType.equals(SqlCommandType.INSERT)) {
+                    traceable.setCreateUser(adminUserId);
+                    traceable.setUpdateUser(adminUserId);
+                    traceable.setCreateTime(time);
+                    traceable.setUpdateTime(time);
+                } else if (sqlCommandType.equals(SqlCommandType.UPDATE)) {
+                    traceable.setUpdateUser(adminUserId);
+                    traceable.setUpdateTime(time);
+                }
             }
         }
 

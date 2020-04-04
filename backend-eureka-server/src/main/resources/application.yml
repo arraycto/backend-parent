@@ -8,6 +8,9 @@ eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+  server:
+#    禁用只读缓存
+    use-read-only-response-cache: false
   service-url:
     defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
 #spring:

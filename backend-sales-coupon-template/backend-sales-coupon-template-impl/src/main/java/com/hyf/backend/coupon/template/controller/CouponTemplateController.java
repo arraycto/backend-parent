@@ -1,5 +1,7 @@
 package com.hyf.backend.coupon.template.controller;
 
+import com.hyf.backend.common.constant.Constant;
+import com.hyf.backend.common.context.ContextHolder;
 import com.hyf.backend.common.vo.ListVO;
 import com.hyf.backend.coupon.template.api.dto.ApiQueryIdsDTO;
 import com.hyf.backend.coupon.template.api.vo.ApiCouponTemplateVO;
@@ -7,6 +9,7 @@ import com.hyf.backend.coupon.template.bo.CouponTemplateBO;
 import com.hyf.backend.coupon.template.feign.UserServiceApiClient;
 import com.hyf.backend.coupon.template.service.CouponTemplateService;
 import com.hyf.backend.utils.common.vo.ResponseVO;
+import com.hyf.backend.utils.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +58,8 @@ public class CouponTemplateController {
 
     @GetMapping("/getUser")
     public ResponseVO<String> getUser(HttpServletRequest request) {
-//        log.info("request remoteAdder: {}", request.getRemoteAddr());
-//        log.info("uid: {}", ContextHolder.getCurrentContext().get("uid"));
+        log.info("request remoteAdder: {}", request.getRemoteAddr());
+        log.info("uid: {}", ContextHolder.getCurrentContext().get(Constant.X_UID));
 //        ResponseVO<String> hello = userServiceApiClient.hello("haahhahahaha");
 //        if (hello.isOk()) {
 //            return hello;
@@ -65,7 +68,7 @@ public class CouponTemplateController {
 //        }
 //        String user = baseTemplateService.getUser();
 //        log.info("data: {}", user);
-        return ResponseVO.ok("fdfd");
+        return ResponseVO.ok("hahaha");
     }
 
     @GetMapping("/test")

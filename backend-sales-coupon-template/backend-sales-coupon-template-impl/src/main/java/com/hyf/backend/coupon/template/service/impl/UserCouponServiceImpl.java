@@ -69,7 +69,7 @@ public class UserCouponServiceImpl implements UserCouponService {
             PageListBO<UserCouponDO> userCouponDOPageListBO = MapperHelper.selectPageByExample(userCouponDOMapper, example, queryPageDTO.toPage());
             if (CollectionUtils.isEmpty(userCouponDOPageListBO.getList())) {
                 log.debug("current user do not have coupon: {}, {}", uid, status);
-                return new PageListBO<>();
+                return new PageListBO<>(userCouponDOPageListBO, UserCouponBO::new);
             }
             PageListBO<UserCouponBO> userCouponBOPageListBO = new PageListBO<>(userCouponDOPageListBO, UserCouponBO::new);
             List<UserCouponBO> userCouponList = userCouponBOPageListBO.getList();
@@ -83,7 +83,8 @@ public class UserCouponServiceImpl implements UserCouponService {
                 }
                 if (status.equals(UserCouponStatusEnum.USABLE.getCode()) && userCouponBO.getCouponTemplateBO().getExpirationCode().equals(CouponTemplateExpirationEnum.GUDING.getCode())) {
                     //固定有效期，有效时间就是deadline-now
-                    int days = Days.daysBetween(new DateTime(userCouponBO.getCouponTemplateBO().getExpirationDeadline()), DateTime.now()).getDays();
+                    int days = Days.daysBetween(DateTime.now(), new DateTime(userCouponBO.getCouponTemplateBO().getExpirationDeadline())).getDays();
+//                    int days = Days.daysBetween(, DateTime.now()).getDays();
                     userCouponBO.setEffectDays(days);
                 }
             }
@@ -114,7 +115,7 @@ public class UserCouponServiceImpl implements UserCouponService {
         List<CouponTemplateBO> availableCouponTemplatePageList = couponTemplateService.findAvailableCouponTemplate(queryPageDTO);
         //过滤过期的优惠券模板
         List<CouponTemplateBO> availableCouponTemplateList = availableCouponTemplatePageList.stream().
-                filter(template -> template.getExpirationDeadline().getTime() <= new Date().getTime()).collect(Collectors.toList());
+                filter(template -> template.getExpirationDeadline().getTime() > new Date().getTime()).collect(Collectors.toList());
         log.info("Find Usable Template Count: {}", availableCouponTemplateList.size());
 
         List<UserCouponBO> userUsableCouponList = userCouponCacheService.getUserCoupon(uid, UserCouponStatusEnum.USABLE.getCode());
@@ -382,7 +383,7 @@ public class UserCouponServiceImpl implements UserCouponService {
         userCouponBO.setCouponTemplateBO(couponTemplateBO);
         //有效时间
         if (couponTemplateBO.getExpirationCode().equals(CouponTemplateExpirationEnum.GUDING.getCode())) {
-            int days = Days.daysBetween(new DateTime(userCouponBO.getCouponTemplateBO().getExpirationDeadline()), DateTime.now()).getDays();
+            int days = Days.daysBetween(DateTime.now(), new DateTime(userCouponBO.getCouponTemplateBO().getExpirationDeadline())).getDays();
             userCouponBO.setEffectDays(days);
         } else {
             userCouponBO.setEffectDays(couponTemplateBO.getExpirationGap());
@@ -392,5 +393,29 @@ public class UserCouponServiceImpl implements UserCouponService {
 
         return userCouponBO;
 
+    }
+
+    @Override
+    public List<UserCouponBO> getUserCouponByIdList(List<Long> userCouponIdList) {
+        if (CollectionUtils.isEmpty(userCouponIdList)) {
+            return Collections.EMPTY_LIST;
+        }
+        UserCouponDOExample example = new UserCouponDOExample();
+        example.createCriteria().andIdIn(userCouponIdList);
+        List<UserCouponBO> userCouponBOList = userCouponDOMapper.selectByExample(example).stream().map(UserCouponBO::new).collect(Collectors.toList());
+        List<Long> templateIdList = userCouponBOList.stream().map(UserCouponBO::getTemplateId).collect(Collectors.toList());
+        List<CouponTemplateBO> couponTemplateBOList = couponTemplateService.findByIds(new ApiQueryIdsDTO().setIds(templateIdList));
+        Map<Long, CouponTemplateBO> templateIdToMap = couponTemplateBOList.stream().collect(Collectors.toMap(CouponTemplateBO::getId, template -> template));
+        for (UserCouponBO userCouponBO : userCouponBOList) {
+            if (templateIdToMap.containsKey(userCouponBO.getTemplateId())) {
+                userCouponBO.setCouponTemplateBO(templateIdToMap.get(userCouponBO.getTemplateId()));
+            }
+            if (userCouponBO.getCouponTemplateBO().getExpirationCode().equals(CouponTemplateExpirationEnum.GUDING.getCode())) {
+                int days = Days.daysBetween(DateTime.now(), new DateTime(userCouponBO.getCouponTemplateBO().getExpirationDeadline().getTime())).getDays();
+                userCouponBO.setEffectDays(days);
+            }
+        }
+
+        return userCouponBOList;
     }
 }

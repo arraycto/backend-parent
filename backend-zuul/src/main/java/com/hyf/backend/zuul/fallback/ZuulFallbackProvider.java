@@ -52,7 +52,7 @@ public class ZuulFallbackProvider implements FallbackProvider {
             public InputStream getBody() throws IOException {
                 ResponseVO<String> responseVO = new ResponseVO<>();
                 responseVO.setCode(-1);
-                responseVO.setMsg("服务超时了");
+                responseVO.setMsg("服务超时了,msg:" + cause.getMessage());
                 responseVO.setData(null);
                 return new ByteArrayInputStream(JSON.toJSONString(responseVO).getBytes());
             }

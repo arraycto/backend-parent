@@ -1,10 +1,13 @@
 package com.hyf.backend.coupon.template.bo;
 
 import com.hyf.backend.coupon.template.dataobject.CouponTemplateDO;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +18,9 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-public class CouponTemplateBO {
+@AllArgsConstructor
+@NoArgsConstructor
+public class CouponTemplateBO implements Serializable {
     private Long id;
 
     private Boolean isAvailable;

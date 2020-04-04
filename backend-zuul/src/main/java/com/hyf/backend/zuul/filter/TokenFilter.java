@@ -1,5 +1,6 @@
 package com.hyf.backend.zuul.filter;
 
+import com.hyf.backend.common.constant.Constant;
 import com.hyf.backend.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +36,8 @@ public class TokenFilter extends AbstractPreFilter {
         JWTUtils.JWTResult jwtResult = JWTUtils.getInstance().checkToken(authorization);
         if (jwtResult.isStatus()) {
             log.info("token合法, token: {}, uid: {} ", authorization, jwtResult.getUid());
-            requestContext.addZuulRequestHeader("uid", jwtResult.getUid());
-            requestContext.addZuulRequestHeader("token", authorization);
+            requestContext.addZuulRequestHeader(Constant.X_UID, jwtResult.getUid());
+            requestContext.addZuulRequestHeader(Constant.X_TOKEN, authorization);
             return success();
         } else {
             log.error("token校验失败: {}", jwtResult.getMsg());

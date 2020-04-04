@@ -39,4 +39,5 @@ public interface UserCouponService {
     UserCouponBO acquireCoupon(Long userId, Long templateId);
 
 
+    List<UserCouponBO> getUserCouponByIdList(List<Long> userCouponIdList);
 }

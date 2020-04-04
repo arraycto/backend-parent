@@ -17,19 +17,23 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+    registry-fetch-interval-seconds: 5
 
 server:
   port: 9090
 zuul:
   routes:
     template-service:
-      path: /template-api/**
+      path: /template-service/**
       serviceId: template-service
-      strip-prefix: true
+      strip-prefix: false
+      sensitiveHeaders:
     user-service:
-      path: /user-api/**
+      path: /user-service/**
       serviceId: user-service
-      strip-prefix: true
+#     false时候前缀不会被移除
+      strip-refix: false
+      sensitiveHeaders:
   prefix: /api
   host:
     connect-timeout-millis: 10000
@@ -49,13 +53,21 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 10000
+            timeoutInMilliseconds: 100000
+          strategy: thread
+  threadpool:
+    default:
+      coreSize: 200
+      maxQueueSize: 1000 #BlockingQueue的最大队列数，默认值-1
+      queueSizeRejectionThreshold: 800
+
 ###全局的Ribbon配置
 ribbon:
   eager-load:
     enabled: true
-  ConnectTimeout: 3000
-  ReadTimeout: 3000
+  ConnectTimeout: 10000
+  ReadTimeout: 10000
+  ServerListRefreshInterval: 2000
 ##每个路由服务使用单独的负载均衡策略
 #template-service:
 #  ribbon:
@@ -63,4 +75,7 @@ ribbon:
 #    ReadTimeout: 2000
 #    ConnectTimeout: 1000
 #    MaxAutoRetries: 1
+logging:
+  level:
+    com.netflix: debug
 #    MaxAutoRetriesNextServer: 1
