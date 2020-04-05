@@ -18,6 +18,12 @@ import java.util.stream.Collectors;
  */
 public abstract class BaseSettlementStrategy {
 
+    /**
+     * 默认是但优惠券消费的
+     *
+     * @param userSettlementDTO
+     * @return
+     */
     protected boolean isProductTypeSatisfy(UserSettlementDTO userSettlementDTO) {
         List<Integer> productTypeList = userSettlementDTO.getProductDTOList().stream().map(ProductDTO::getType).collect(Collectors.toList());
         List<UserCouponBO> userCouponList = getUserCouponList(userSettlementDTO);
@@ -40,6 +46,11 @@ public abstract class BaseSettlementStrategy {
     protected BigDecimal minCost() {
         return BigDecimal.valueOf(0.1);
     }
+    protected BigDecimal retain2Decimals(BigDecimal value) {
+
+        return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+    }
+
 
     protected abstract List<UserCouponBO> getUserCouponList(UserSettlementDTO userSettlementDTO);
 }

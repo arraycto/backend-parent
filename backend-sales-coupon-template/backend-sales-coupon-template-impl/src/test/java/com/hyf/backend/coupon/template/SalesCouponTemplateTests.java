@@ -12,6 +12,7 @@ import com.hyf.backend.coupon.template.dataobject.CouponTemplateDO;
 import com.hyf.backend.coupon.template.dataobject.CouponTemplateDOExample;
 import com.hyf.backend.coupon.template.mapper.CouponTemplateDOMapper;
 import com.hyf.backend.coupon.template.service.UserCouponCacheService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.joda.time.DateTime;
@@ -22,6 +23,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -120,6 +123,7 @@ public class SalesCouponTemplateTests {
         }
     }
 
+
     @Test
     public void testGetRedisPage1() {
 //        List<UserCouponBO> userCouponPage = userCouponCacheService.getUserCouponPage(1L, UserCouponStatusEnum.USABLE.getCode(), 1, 5);
@@ -144,6 +148,9 @@ public class SalesCouponTemplateTests {
     }
 
     public static void main(String[] args) {
-        System.out.println(C2.b);
+        List<Integer> integers = Arrays.asList(3,4);
+        List<Integer> integers1 = Arrays.asList(3, 4, 5, 6);
+        Collection<Integer> subtract = CollectionUtils.subtract(integers, integers1);
+        System.out.println(subtract);
     }
 }
