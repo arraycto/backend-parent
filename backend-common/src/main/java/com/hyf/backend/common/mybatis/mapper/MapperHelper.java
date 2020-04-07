@@ -67,6 +67,22 @@ public class MapperHelper {
         return selectPageByExample(mapper, example, page);
     }
 
+    public static <R, RE, K, M extends BaseMapperWithPKAndBlobs<R, RE, K>> PageListBO<R> selectPageByExampleWithBlobs(M mapper, RE example, Page page) {
+        try {
+            long totalCnt = composeExampleOrderByClause(mapper, example, page);
+            List<R> list = mapper.selectByExampleWithBLOBs(example);
+            return new PageListBO<>(list, page, totalCnt);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return new PageListBO<>(Collections.emptyList(), page, 0);
+        }
+    }
+
+    public static <R, RE, K, M extends BaseMapperWithPKAndBlobs<R, RE, K>, C, Q> PageListBO<R> selectPageByQueryWithBlobs(M mapper, RE example, C criteria, Q query, Page page) {
+        setupCriteriaByQueryInfo(example, criteria, query);
+        return selectPageByExampleWithBlobs(mapper, example, page);
+    }
+
     public static <R, RE, M extends BaseMapper<R, RE>> PageListBO<R> selectPageByExample(M mapper,
                                                                                          RE example, Page
                                                                                                  page) {
@@ -161,21 +177,21 @@ public class MapperHelper {
                             }
                         }
                     } else if (value instanceof Date) {
-                        if(field.getName().endsWith("Start")) {
-                            try{
+                        if (field.getName().endsWith("Start")) {
+                            try {
                                 String realFiledName = field.getName().substring(0, field.getName().indexOf("Start"));
                                 methodPrefix = "and" + StringUtils.capitalize(realFiledName);
                                 criteriaClass.getMethod(methodPrefix + "GreaterThanOrEqualTo", Date.class).invoke(criteria, value);
-                            }catch (IllegalAccessException | InvocationTargetException |
+                            } catch (IllegalAccessException | InvocationTargetException |
                                     NoSuchMethodException ignored) {
                             }
                         }
-                        if(field.getName().endsWith("End")) {
-                            try{
+                        if (field.getName().endsWith("End")) {
+                            try {
                                 String realFiledName = field.getName().substring(0, field.getName().indexOf("End"));
                                 methodPrefix = "and" + StringUtils.capitalize(realFiledName);
                                 criteriaClass.getMethod(methodPrefix + "LessThanOrEqualTo", Date.class).invoke(criteria, value);
-                            }catch (IllegalAccessException | InvocationTargetException |
+                            } catch (IllegalAccessException | InvocationTargetException |
                                     NoSuchMethodException ignored) {
                             }
                         }

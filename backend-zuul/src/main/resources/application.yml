@@ -34,6 +34,12 @@ zuul:
 #     false时候前缀不会被移除
       strip-refix: false
       sensitiveHeaders:
+    goods-service:
+      path: /goods-service/**
+      serviceId: goods-service
+      #     false时候前缀不会被移除
+      strip-refix: false
+      sensitiveHeaders:
   prefix: /api
   host:
     connect-timeout-millis: 10000
