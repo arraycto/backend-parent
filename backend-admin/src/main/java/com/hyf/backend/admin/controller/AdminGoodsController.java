@@ -5,7 +5,7 @@ import com.hyf.backend.admin.feign.AdminGoodsClient;
 import com.hyf.backend.common.vo.PageVO;
 import com.hyf.backend.goods.admin.vo.AdminGoodsVO;
 import com.hyf.backend.goods.dto.AdminGoodsAggregationTO;
-import com.hyf.backend.goods.dto.AdminGoodsQueryDTO;
+import com.hyf.backend.goods.dto.GoodsQueryDTO;
 import com.hyf.backend.utils.common.vo.ResponseVO;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class AdminGoodsController {
     @GetMapping("/list")
     @RequiresPermissions("admin:goods:list")
     @RequiresPermissionsDesc(menu = {"商品管理", "商品管理"}, button = "列表")
-    public ResponseVO findPageByQuery(AdminGoodsQueryDTO adminGoodsQueryDTO) {
+    public ResponseVO findPageByQuery(GoodsQueryDTO adminGoodsQueryDTO) {
         ResponseVO<PageVO<AdminGoodsVO>> pageVOResponseVO = goodsClient.findPageByQuery(adminGoodsQueryDTO);
         if (pageVOResponseVO.isOk()) {
             return pageVOResponseVO;
@@ -49,8 +49,8 @@ public class AdminGoodsController {
     }
 
     @PostMapping("/update")
-    @RequiresPermissions("admin:goods:create")
-    @RequiresPermissionsDesc(menu = {"商品管理", "商品管理"}, button = "创建")
+    @RequiresPermissions("admin:goods:update")
+    @RequiresPermissionsDesc(menu = {"商品管理", "商品管理"}, button = "修改")
     public ResponseVO updateGoods(@RequestBody AdminGoodsAggregationTO adminGoodsAggregationTO) {
         return goodsClient.updateGoods(adminGoodsAggregationTO);
     }

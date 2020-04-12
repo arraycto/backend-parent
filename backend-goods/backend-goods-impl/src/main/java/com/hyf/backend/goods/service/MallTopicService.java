@@ -2,10 +2,12 @@ package com.hyf.backend.goods.service;
 
 import com.hyf.backend.common.vo.PageVO;
 import com.hyf.backend.goods.admin.vo.AdminTopicVO;
+import com.hyf.backend.goods.dataobject.MallTopic;
 import com.hyf.backend.goods.dto.AdminTopicCreateDTO;
 import com.hyf.backend.goods.dto.AdminTopicQueryDTO;
 import com.hyf.backend.goods.dto.AdminTopicUpdateDTO;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,4 +23,7 @@ public interface MallTopicService {
     AdminTopicVO updateTopic(AdminTopicUpdateDTO updateDTO);
 
     Map<String, Object> topicDetail(Integer id);
+
+    List<MallTopic> listTopicLimit();
+
 }

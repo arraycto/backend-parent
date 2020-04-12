@@ -61,12 +61,12 @@ public class ManjianAndZhekouSettlementStrategy extends BaseSettlementStrategy i
 
         assert manjian != null && zhekou != null;
         if (!isProductTypeSatisfy(userSettlementDTO)) {
-            return new UserSettlementBO(Collections.emptyList(), costPrice, userSettlementDTO.getEmploy());
+            return new UserSettlementBO(Collections.emptyList(), costPrice, userSettlementDTO.getEmploy(), costPrice);
         }
 
         //校验是否可以共存的限制
         if (!isShared(manjian, zhekou)) {
-            return new UserSettlementBO(Collections.emptyList(), costPrice, userSettlementDTO.getEmploy());
+            return new UserSettlementBO(Collections.emptyList(), costPrice, userSettlementDTO.getEmploy(), costPrice);
         }
 
         //先计算满减的

@@ -3,9 +3,12 @@ package com.hyf.backend.goods.service;
 import com.hyf.backend.common.domain.PageListBO;
 import com.hyf.backend.common.vo.PageVO;
 import com.hyf.backend.goods.bo.AdminBrandBO;
+import com.hyf.backend.goods.dataobject.MallBrand;
 import com.hyf.backend.goods.dto.AdminBrandCreateDTO;
 import com.hyf.backend.goods.dto.AdminBrandQueryDTO;
 import com.hyf.backend.goods.dto.AdminBrandUpdateDTO;
+
+import java.util.List;
 
 /**
  * @Author: Elvis on 2020/4/5
@@ -21,4 +24,8 @@ public interface MallBrandService {
 
 
     AdminBrandBO updateBrand(AdminBrandUpdateDTO brandUpdateDTO);
+
+    List<MallBrand> listAll();
+
+    MallBrand findById(Integer brandId);
 }

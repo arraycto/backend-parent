@@ -31,5 +31,5 @@ public interface UserCouponCacheService {
      */
     boolean addCoupon(Long uid, Integer status, List<UserCouponBO> userCouponBO);
 
-
+    UserCouponBO getUserCouponSingle(Integer uid, Integer couponId, Integer status);
 }

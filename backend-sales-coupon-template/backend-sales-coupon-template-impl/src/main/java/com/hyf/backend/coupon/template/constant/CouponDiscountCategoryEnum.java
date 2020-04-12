@@ -9,9 +9,9 @@ import java.util.stream.Stream;
  * @Desc: 优惠券折扣分类
  */
 public enum CouponDiscountCategoryEnum {
-    MANJIAN("满减", 0),
+    ZHEKOU("折扣", 0),
     LIJIAN("立减", 1),
-    ZHEKOU("折扣", 2),
+    MANJIAN("满减", 2),
     MANJIAN_AND_ZHEKOU("满减和折扣", 3);
 
     private String desc;

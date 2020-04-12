@@ -23,4 +23,5 @@ public class UserSettlementBO implements Serializable {
      * 是否使结算生效, 即核销
      */
     private Boolean employ;
+    private BigDecimal totalGoodsPrice;
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <classPathEntry
+            location="/Users/huyufei/.m2/repository/mysql/mysql-connector-java/8.0.18/mysql-connector-java-8.0.18.jar"/>
+    <context id="MySQLTables" targetRuntime="MyBatis3">
+        <property name="autoDelimitKeywords" value="true"/>
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+        <!--        <plugin type="me.superkoh.kframework.lib.db.mybatis.plugins.pagination.MybatisGeneratorPaginationPlugin"/>-->
+        <!--覆盖生成XML文件-->
+        <!--        <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin" />-->
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:33061/coupon?useUnicode=true"
+                        userId="root"
+                        password="gdhuyufei">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="com.hyf.backend.user.dataobject"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="com.hyf.backend.user.mapper"
+                         targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+
+        <table tableName="mall_user" domainObjectName="MallUser">
+            <property name="rootClass"
+                      value="com.hyf.backend.common.domain.DateAndAuthorTraceableDO"/>
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="create_time" javaType="java.util.Date"/>
+            <columnOverride column="update_time" javaType="java.util.Date"/>
+            <columnOverride column="is_deleted" javaType="java.lang.Boolean" jdbcType="TINYINT"/>
+        </table>
+
+    </context>
+</generatorConfiguration>

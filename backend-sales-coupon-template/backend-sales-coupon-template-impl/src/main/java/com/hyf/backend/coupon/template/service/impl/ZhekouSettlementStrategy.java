@@ -41,21 +41,25 @@ public class ZhekouSettlementStrategy extends BaseSettlementStrategy implements 
     public UserSettlementBO settlement(UserSettlementDTO userSettlementDTO) {
         BigDecimal costPrice = calcProductCostPrice(userSettlementDTO);
         if (!isProductTypeSatisfy(userSettlementDTO)) {
-            return new UserSettlementBO(Collections.emptyList(), costPrice, userSettlementDTO.getEmploy());
+            return new UserSettlementBO(Collections.emptyList(), costPrice, userSettlementDTO.getEmploy(), costPrice);
         }
         if (CollectionUtils.isNotEmpty(userCouponBOList)) {
             UserCouponBO userCouponBO = userCouponBOList.get(0);
             Integer zhekouQuota = userCouponBO.getCouponTemplateBO().getZhekouQuota();
-            BigDecimal actualPrice = (retain2Decimals(costPrice.multiply(BigDecimal.valueOf(1.0).divide(BigDecimal.valueOf(zhekouQuota))))
-                    .compareTo(minCost())) > 0 ? retain2Decimals(costPrice.multiply(BigDecimal.valueOf(1.0).divide(BigDecimal.valueOf(zhekouQuota))))
-                    : minCost();
+            BigDecimal discountQuota = costPrice.multiply(BigDecimal.valueOf(zhekouQuota).divide(BigDecimal.valueOf(100)));
+            BigDecimal actualPrice = costPrice.subtract(retain2Decimals(discountQuota));
+            actualPrice = actualPrice.compareTo(minCost()) < 0 ? minCost() : actualPrice;
+//            BigDecimal actualPrice = (retain2Decimals(costPrice.multiply((BigDecimal.valueOf(zhekouQuota).multiply(BigDecimal.valueOf(1.0))).divide(BigDecimal.valueOf(zhekouQuota))))
+//                    .compareTo(minCost())) > 0 ? retain2Decimals(costPrice.multiply(BigDecimal.valueOf(1.0).divide(BigDecimal.valueOf(zhekouQuota))))
+//                    : minCost();
             UserSettlementBO userSettlementBO = new UserSettlementBO();
             userSettlementBO.setEmploy(userSettlementBO.getEmploy());
             userSettlementBO.setUserCouponBO(userCouponBOList);
             userSettlementBO.setCost(actualPrice);
+            userSettlementBO.setTotalGoodsPrice(costPrice);
             return userSettlementBO;
         }
-        return new UserSettlementBO(Collections.emptyList(), BigDecimal.ZERO, userSettlementDTO.getEmploy());
+        return new UserSettlementBO(Collections.emptyList(), BigDecimal.ZERO, userSettlementDTO.getEmploy(), costPrice);
     }
 
 

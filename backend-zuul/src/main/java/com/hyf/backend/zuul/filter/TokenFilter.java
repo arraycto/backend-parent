@@ -26,12 +26,13 @@ public class TokenFilter extends AbstractPreFilter {
             return success();
         }
 
-        String authorization = request.getHeader("Authorization");
+        String authorization = request.getHeader("X-Litemall-Token");
         log.info("Authorization: {}", authorization);
         log.info(String.format("%s request to  %s", request.getMethod(), request.getRequestURL().toString()));
         if (StringUtils.isEmpty(authorization)) {
             log.error("toke is empty");
-            return fail(401, -1, "token is empty");
+//            return fail(401, -1, "token is empty");
+            return success();
         }
         JWTUtils.JWTResult jwtResult = JWTUtils.getInstance().checkToken(authorization);
         if (jwtResult.isStatus()) {
@@ -42,7 +43,11 @@ public class TokenFilter extends AbstractPreFilter {
         } else {
             log.error("token校验失败: {}", jwtResult.getMsg());
 //            throw new BizException(-1, "token校验失败");
-            return fail(HttpStatus.UNAUTHORIZED.value(), jwtResult.getCode(), jwtResult.getMsg());
+            if(jwtResult.getCode() != 401) {
+                return fail(HttpStatus.UNAUTHORIZED.value(), jwtResult.getCode(), jwtResult.getMsg());
+            }
+            return success();
+
         }
 
     }

@@ -1,5 +1,6 @@
 package com.hyf.backend.coupon.template.bo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hyf.backend.coupon.template.dataobject.CouponTemplateDO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -60,6 +61,7 @@ public class CouponTemplateBO implements Serializable {
     /**
      * 失效日期，两类规则都有效
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date expirationDeadline;
 
     /**
@@ -90,6 +92,10 @@ public class CouponTemplateBO implements Serializable {
      * 可以和哪些优惠券一起叠加使用，同一类优惠券不能叠加使用
      */
     private List<String> weight;
+
+    private String tag;
+
+    private String desc;
 
     private Date createTime;
 

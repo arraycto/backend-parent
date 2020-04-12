@@ -1,5 +1,6 @@
 package com.hyf.backend.goods.service.impl;
 
+import com.hyf.backend.common.domain.Page;
 import com.hyf.backend.common.domain.PageListBO;
 import com.hyf.backend.common.mybatis.mapper.MapperHelper;
 import com.hyf.backend.goods.admin.vo.AdminGoodsAttrVO;
@@ -7,9 +8,12 @@ import com.hyf.backend.goods.admin.vo.AdminGoodsDetailVO;
 import com.hyf.backend.goods.admin.vo.AdminGoodsSkuVO;
 import com.hyf.backend.goods.admin.vo.AdminGoodsSpecVO;
 import com.hyf.backend.goods.admin.vo.AdminGoodsVO;
-import com.hyf.backend.goods.bo.AdminGoodsBO;
+import com.hyf.backend.goods.api.vo.ApiGoodsSkuVO;
+import com.hyf.backend.goods.api.vo.ApiGoodsVO;
+import com.hyf.backend.goods.api.vo.ApiUserCartVO;
 import com.hyf.backend.goods.bo.AdminGoodsBrandOptionBO;
 import com.hyf.backend.goods.bo.AdminGoodsCategoryOptionBO;
+import com.hyf.backend.goods.bo.GoodsBO;
 import com.hyf.backend.goods.dataobject.MallBrand;
 import com.hyf.backend.goods.dataobject.MallGoods;
 import com.hyf.backend.goods.dataobject.MallGoodsAttr;
@@ -23,9 +27,10 @@ import com.hyf.backend.goods.dataobject.MallGoodsSpecExample;
 import com.hyf.backend.goods.dto.AdminGoodsAggregationTO;
 import com.hyf.backend.goods.dto.AdminGoodsAttrCreateDTO;
 import com.hyf.backend.goods.dto.AdminGoodsCreateDTO;
-import com.hyf.backend.goods.dto.AdminGoodsQueryDTO;
 import com.hyf.backend.goods.dto.AdminGoodsSkuCreateDTO;
 import com.hyf.backend.goods.dto.AdminGoodsSpecCreateDTO;
+import com.hyf.backend.goods.dto.ApiAddCartDTO;
+import com.hyf.backend.goods.dto.GoodsQueryDTO;
 import com.hyf.backend.goods.mapper.MallBrandMapper;
 import com.hyf.backend.goods.mapper.MallGoodsAttrMapper;
 import com.hyf.backend.goods.mapper.MallGoodsCategoryMapper;
@@ -34,6 +39,7 @@ import com.hyf.backend.goods.mapper.MallGoodsSkuMapper;
 import com.hyf.backend.goods.mapper.MallGoodsSpecMapper;
 import com.hyf.backend.goods.service.MallGoodsService;
 import com.hyf.backend.utils.exception.BizException;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,9 +48,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @Author: Elvis on 2020/4/6
@@ -68,7 +77,7 @@ public class MallGoodsServiceImpl implements MallGoodsService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AdminGoodsBO createGoods(AdminGoodsAggregationTO adminGoodsAggregationTO) {
+    public GoodsBO createGoods(AdminGoodsAggregationTO adminGoodsAggregationTO) {
         List<AdminGoodsAttrCreateDTO> attributes = adminGoodsAggregationTO.getAttributes();
         List<AdminGoodsSkuCreateDTO> skus = adminGoodsAggregationTO.getSkus();
         AdminGoodsCreateDTO goods = adminGoodsAggregationTO.getGoods();
@@ -115,21 +124,29 @@ public class MallGoodsServiceImpl implements MallGoodsService {
             mallGoodsAttrMapper.insertSelective(toCreateAttr);
         }
 
-        return new AdminGoodsBO(toCreateGoods);
+        return new GoodsBO(toCreateGoods);
 
     }
 
     @Override
-    public PageListBO<AdminGoodsBO> findPageByQuery(AdminGoodsQueryDTO goodsQueryDTO) {
+    public PageListBO<GoodsBO> findPageByQuery(GoodsQueryDTO goodsQueryDTO) {
         MallGoodsExample example = new MallGoodsExample();
         MallGoodsExample.Criteria criteria = example.createCriteria();
         PageListBO<MallGoods> mallGoodsPageListBO = MapperHelper.selectPageByQueryWithBlobs(mallGoodsMapper, example, criteria, goodsQueryDTO, goodsQueryDTO.toPage());
-        return new PageListBO<>(mallGoodsPageListBO, AdminGoodsBO::new);
+        return new PageListBO<>(mallGoodsPageListBO, GoodsBO::new);
+    }
+
+    @Override
+    public PageListBO<GoodsBO> findPageByQuerySimple(GoodsQueryDTO goodsQueryDTO) {
+        MallGoodsExample example = new MallGoodsExample();
+        MallGoodsExample.Criteria criteria = example.createCriteria();
+        PageListBO<MallGoods> mallGoodsPageListBO = MapperHelper.selectPageByQuery(mallGoodsMapper, example, criteria, goodsQueryDTO, goodsQueryDTO.toPage());
+        return new PageListBO<>(mallGoodsPageListBO, GoodsBO::new);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AdminGoodsBO updateGoods(AdminGoodsAggregationTO adminGoodsAggregationTO) {
+    public GoodsBO updateGoods(AdminGoodsAggregationTO adminGoodsAggregationTO) {
         AdminGoodsCreateDTO goods = adminGoodsAggregationTO.getGoods();
         List<AdminGoodsSkuCreateDTO> skus = adminGoodsAggregationTO.getSkus();
         List<AdminGoodsAttrCreateDTO> attributes = adminGoodsAggregationTO.getAttributes();
@@ -170,7 +187,7 @@ public class MallGoodsServiceImpl implements MallGoodsService {
             toCreateAttr.setGoodsId(goods.getId());
             mallGoodsAttrMapper.insertSelective(toCreateAttr);
         }
-        return new AdminGoodsBO(mallGoodsMapper.selectByPrimaryKey(goods.getId()));
+        return new GoodsBO(mallGoodsMapper.selectByPrimaryKey(goods.getId()));
 
     }
 
@@ -266,5 +283,94 @@ public class MallGoodsServiceImpl implements MallGoodsService {
         }
         resultMap.put("brandList", brandList);
         return resultMap;
+    }
+
+    @Override
+    public List<MallGoods> listByNew() {
+        MallGoodsExample example = new MallGoodsExample();
+        example.createCriteria().andIsNewEqualTo(true);
+        PageListBO<MallGoods> mallGoodsPageListBO = MapperHelper.selectPageByExample(mallGoodsMapper, example, new Page().setPageNo(1).setPageSize(4));
+        return mallGoodsPageListBO.getList();
+    }
+
+    @Override
+    public List<MallGoods> listByHot() {
+        MallGoodsExample example = new MallGoodsExample();
+        example.createCriteria().andIsHotEqualTo(true);
+        PageListBO<MallGoods> mallGoodsPageListBO = MapperHelper.selectPageByExample(mallGoodsMapper, example, new Page().setPageNo(1).setPageSize(4));
+        return mallGoodsPageListBO.getList();
+    }
+
+    @Override
+    public void goodsDetailPortal(Integer id) {
+
+    }
+
+    @Override
+    public MallGoods findById(Integer id) {
+        return MapperHelper.selectByPrimaryKeyGuaranteed(mallGoodsMapper, id);
+    }
+
+    @Override
+    public List<MallGoodsSpec> findSpecByGoodsId(Integer goodsId) {
+        MallGoodsSpecExample example = new MallGoodsSpecExample();
+        example.createCriteria().andGoodsIdEqualTo(goodsId);
+        return mallGoodsSpecMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<MallGoodsSku> findSkuByGoodsId(Integer id) {
+        MallGoodsSkuExample example = new MallGoodsSkuExample();
+        example.createCriteria().andGoodsIdEqualTo(id);
+        return mallGoodsSkuMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<MallGoodsAttr> findAttrByGoodsId(Integer id) {
+        MallGoodsAttrExample example = new MallGoodsAttrExample();
+        example.createCriteria().andGoodsIdEqualTo(id);
+        return mallGoodsAttrMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<ApiGoodsSkuVO> findBySkuList(Collection<Integer> skuIdList) {
+        if (skuIdList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        MallGoodsSkuExample skuExample = new MallGoodsSkuExample();
+        skuExample.createCriteria().andIdIn(new ArrayList<>(skuIdList));
+        List<MallGoodsSku> mallGoodsSkuList = mallGoodsSkuMapper.selectByExample(skuExample);
+        List<Integer> goodsIdList = mallGoodsSkuList.stream().map(MallGoodsSku::getGoodsId).collect(Collectors.toList());
+        Map<Integer, MallGoods> goodsIdToMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(goodsIdList)) {
+            MallGoodsExample goodsExample = new MallGoodsExample();
+            goodsExample.createCriteria().andIdIn(goodsIdList);
+            List<MallGoods> mallGoods = mallGoodsMapper.selectByExample(goodsExample);
+            goodsIdToMap = mallGoods.stream().collect(Collectors.toMap(MallGoods::getId, goods -> goods));
+        }
+        List<ApiGoodsSkuVO> voList = new ArrayList<>();
+        for (MallGoodsSku goodsSku : mallGoodsSkuList) {
+            ApiGoodsSkuVO skuVO = new ApiGoodsSkuVO();
+            BeanUtils.copyProperties(goodsSku, skuVO);
+            if (goodsIdToMap.containsKey(goodsSku.getGoodsId())) {
+                MallGoods mallGoods1 = goodsIdToMap.get(goodsSku.getGoodsId());
+                ApiGoodsVO goodsVO = new ApiGoodsVO();
+                BeanUtils.copyProperties(mallGoods1, goodsVO);
+                skuVO.setGoods(goodsVO);
+            }
+            voList.add(skuVO);
+        }
+
+        return voList;
+    }
+
+    @Override
+    public ApiUserCartVO addCart(Integer uid, ApiAddCartDTO apiAddCartDTO) {
+        return null;
+    }
+
+    @Override
+    public MallGoodsSku findSkuById(Integer skuId) {
+        return MapperHelper.selectByPrimaryKeyGuaranteed(mallGoodsSkuMapper, skuId);
     }
 }

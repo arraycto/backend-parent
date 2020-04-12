@@ -4,7 +4,7 @@ import com.hyf.backend.common.vo.PageVO;
 import com.hyf.backend.goods.admin.vo.AdminGoodsDetailVO;
 import com.hyf.backend.goods.admin.vo.AdminGoodsVO;
 import com.hyf.backend.goods.dto.AdminGoodsAggregationTO;
-import com.hyf.backend.goods.dto.AdminGoodsQueryDTO;
+import com.hyf.backend.goods.dto.GoodsQueryDTO;
 import com.hyf.backend.utils.common.vo.ResponseVO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +32,7 @@ public interface AdminGoodsApi {
     ResponseVO<AdminGoodsDetailVO> goodsDetail(@RequestParam("id") Integer id);
 
     @PostMapping("/list")
-    ResponseVO<PageVO<AdminGoodsVO>> findPageByQuery(@RequestBody AdminGoodsQueryDTO adminGoodsQueryDTO);
+    ResponseVO<PageVO<AdminGoodsVO>> findPageByQuery(@RequestBody GoodsQueryDTO adminGoodsQueryDTO);
 
     @PostMapping("/update")
     ResponseVO<AdminGoodsVO> updateGoods(@RequestBody AdminGoodsAggregationTO goodsAggregationTO);

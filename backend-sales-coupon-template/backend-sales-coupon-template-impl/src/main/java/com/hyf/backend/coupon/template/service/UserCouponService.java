@@ -2,6 +2,9 @@ package com.hyf.backend.coupon.template.service;
 
 import com.hyf.backend.common.domain.PageListBO;
 import com.hyf.backend.common.domain.QueryPageDTO;
+import com.hyf.backend.coupon.template.api.dto.ApiCouponSettlementDTO;
+import com.hyf.backend.coupon.template.api.vo.ApiCouponSettlementVO;
+import com.hyf.backend.coupon.template.api.vo.ApiUserCouponVO;
 import com.hyf.backend.coupon.template.bo.CouponTemplateBO;
 import com.hyf.backend.coupon.template.bo.UserCouponBO;
 
@@ -40,4 +43,10 @@ public interface UserCouponService {
 
 
     List<UserCouponBO> getUserCouponByIdList(List<Long> userCouponIdList);
+
+    ApiCouponSettlementVO settlementCheckedGoods(ApiCouponSettlementDTO settlementDTO);
+
+    List<ApiUserCouponVO> listMatchCartGoodsCouponList(Integer uid, Integer cartId);
+
+
 }

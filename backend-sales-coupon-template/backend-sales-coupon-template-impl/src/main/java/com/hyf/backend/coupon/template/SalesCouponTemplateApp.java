@@ -43,7 +43,7 @@ public class SalesCouponTemplateApp {
 //        for (int i = 0; i < 100; i++) {
 //            int j = i;
 //            pool.execute(new Thread(new Runnable() {
-//                @Override
+//                @Overri   de
 //                public void run() {
 //                    SalesCouponTemplateApp.threadLocal.set("猿天地" + j);
 //                    //线程池里面的线程会又用线程池里面的线程执行任务

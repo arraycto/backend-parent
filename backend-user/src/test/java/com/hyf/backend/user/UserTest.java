@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hyf.backend.user.entity.MoocBackendUserT;
-import com.hyf.backend.user.mapper.MoocBackendUserTMapper;
+//import com.hyf.backend.user.mapper.MoocBackendUserTMapper;
 import com.hyf.backend.utils.secure.Digester;
 import org.junit.Test;
 
@@ -18,8 +18,8 @@ import java.util.List;
  */
 
 public class UserTest extends BackendUserApplicationTests {
-    @Resource
-    private MoocBackendUserTMapper moocBackendUserTMapper;
+//    @Resource
+//    private MoocBackendUserTMapper moocBackendUserTMapper;
 
     @Test
     public void add() {
@@ -28,7 +28,7 @@ public class UserTest extends BackendUserApplicationTests {
         moocBackendUser.setUserName("huyufei");
         moocBackendUser.setUserPhone("18206089675");
         moocBackendUser.setUserPwd(Digester.createMd5Digest().getStringDigest("12345"));
-        moocBackendUserTMapper.insert(moocBackendUser);
+//        moocBackendUserTMapper.insert(moocBackendUser);
 //        }
 
     }
@@ -38,16 +38,16 @@ public class UserTest extends BackendUserApplicationTests {
 //        MoocBackendUserT moocBackendUserT = moocBackendUserTMapper.selectById(2);
 //        System.out.println(moocBackendUserT);
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("user_name", "huyufei14");
-        List<MoocBackendUserT> moocBackendUserTS = moocBackendUserTMapper.selectList(queryWrapper);
-        System.out.println(moocBackendUserTS);
+//        QueryWrapper queryWrapper = new QueryWrapper();
+//        queryWrapper.eq("user_name", "huyufei14");
+//        List<MoocBackendUserT> moocBackendUserTS = moocBackendUserTMapper.selectList(queryWrapper);
+//        System.out.println(moocBackendUserTS);
     }
 
     @Test
     public void selectByPage() {
         Page<MoocBackendUserT> page = new Page<>(1, 10);
-        IPage<MoocBackendUserT> moocBackendUserTIPage = moocBackendUserTMapper.selectPage(page, null);
+//        IPage<MoocBackendUserT> moocBackendUserTIPage = moocBackendUserTMapper.selectPage(page, null);
 
     }
 
@@ -59,7 +59,7 @@ public class UserTest extends BackendUserApplicationTests {
         moocBackendUser.setUuid(2);
         moocBackendUser.setUserPwd("gdhuyufei");
         moocBackendUser.setUserPhone("18206089675");
-        moocBackendUserTMapper.updateById(moocBackendUser);
+//        moocBackendUserTMapper.updateById(moocBackendUser);
 //        moocBackendUser.setUserName("胡禹飞");
 
     }

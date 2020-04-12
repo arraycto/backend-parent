@@ -5,8 +5,10 @@ import com.hyf.backend.coupon.template.admin.dto.AdminBannerCreateDTO;
 import com.hyf.backend.coupon.template.admin.dto.AdminBannerQueryDTO;
 import com.hyf.backend.coupon.template.admin.dto.AdminBannerUpdateDTO;
 import com.hyf.backend.coupon.template.admin.vo.AdminBannerVO;
+import com.hyf.backend.coupon.template.dataobject.MallBanner;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @Author: Elvis on 2020/4/7
@@ -21,4 +23,5 @@ public interface BannerService {
 
     PageVO<AdminBannerVO> findPageByQuery(@Valid AdminBannerQueryDTO queryDTO);
 
+    List<MallBanner> listBanner();
 }

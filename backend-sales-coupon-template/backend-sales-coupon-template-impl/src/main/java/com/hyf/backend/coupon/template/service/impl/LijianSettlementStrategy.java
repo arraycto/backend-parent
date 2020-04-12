@@ -42,7 +42,7 @@ public class LijianSettlementStrategy extends BaseSettlementStrategy implements 
         boolean productTypeSatisfy = isProductTypeSatisfy(userSettlementDTO);
         BigDecimal costPrice = calcProductCostPrice(userSettlementDTO);
         if (!productTypeSatisfy) {
-            return new UserSettlementBO(Collections.emptyList(), costPrice, userSettlementDTO.getEmploy());
+            return new UserSettlementBO(Collections.emptyList(), costPrice, userSettlementDTO.getEmploy(), costPrice);
         }
         if (CollectionUtils.isNotEmpty(userCouponBOList)) {
             UserCouponBO userCouponBO = userCouponBOList.get(0);
@@ -52,9 +52,10 @@ public class LijianSettlementStrategy extends BaseSettlementStrategy implements 
             userSettlementBO.setCost(actualPrice.compareTo(minCost()) < 0 ? minCost() : actualPrice);
             userSettlementBO.setUserCouponBO(userCouponBOList);
             userSettlementBO.setEmploy(userSettlementDTO.getEmploy());
+            userSettlementBO.setTotalGoodsPrice(costPrice);
             return userSettlementBO;
         }
-        return new UserSettlementBO(Collections.emptyList(), BigDecimal.ZERO, userSettlementDTO.getEmploy());
+        return new UserSettlementBO(Collections.emptyList(), BigDecimal.ZERO, userSettlementDTO.getEmploy(), costPrice);
 
     }
 }

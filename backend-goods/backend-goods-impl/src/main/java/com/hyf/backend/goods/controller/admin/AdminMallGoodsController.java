@@ -5,9 +5,9 @@ import com.hyf.backend.common.vo.PageVO;
 import com.hyf.backend.goods.admin.AdminGoodsApi;
 import com.hyf.backend.goods.admin.vo.AdminGoodsDetailVO;
 import com.hyf.backend.goods.admin.vo.AdminGoodsVO;
-import com.hyf.backend.goods.bo.AdminGoodsBO;
+import com.hyf.backend.goods.bo.GoodsBO;
 import com.hyf.backend.goods.dto.AdminGoodsAggregationTO;
-import com.hyf.backend.goods.dto.AdminGoodsQueryDTO;
+import com.hyf.backend.goods.dto.GoodsQueryDTO;
 import com.hyf.backend.goods.service.MallGoodsService;
 import com.hyf.backend.utils.common.vo.ResponseVO;
 import org.springframework.beans.BeanUtils;
@@ -31,7 +31,7 @@ public class AdminMallGoodsController implements AdminGoodsApi {
 
     @Override
     public ResponseVO<AdminGoodsVO> createGoods(AdminGoodsAggregationTO adminGoodsAggregationCreateDTO) {
-        AdminGoodsBO goods = mallGoodsService.createGoods(adminGoodsAggregationCreateDTO);
+        GoodsBO goods = mallGoodsService.createGoods(adminGoodsAggregationCreateDTO);
         AdminGoodsVO adminGoodsVO = new AdminGoodsVO();
         BeanUtils.copyProperties(goods, adminGoodsVO);
         return ResponseVO.ok(adminGoodsVO);
@@ -49,11 +49,11 @@ public class AdminMallGoodsController implements AdminGoodsApi {
     }
 
     @Override
-    public ResponseVO<PageVO<AdminGoodsVO>> findPageByQuery(AdminGoodsQueryDTO adminGoodsQueryDTO) {
-        PageListBO<AdminGoodsBO> pageByQuery =
+    public ResponseVO<PageVO<AdminGoodsVO>> findPageByQuery(GoodsQueryDTO adminGoodsQueryDTO) {
+        PageListBO<GoodsBO> pageByQuery =
                 mallGoodsService.findPageByQuery(adminGoodsQueryDTO);
         List<AdminGoodsVO> voList = new ArrayList<>(pageByQuery.getList().size());
-        for (AdminGoodsBO bo : pageByQuery.getList()) {
+        for (GoodsBO bo : pageByQuery.getList()) {
             AdminGoodsVO vo = new AdminGoodsVO();
             BeanUtils.copyProperties(bo, vo);
             voList.add(vo);
@@ -63,7 +63,7 @@ public class AdminMallGoodsController implements AdminGoodsApi {
 
     @Override
     public ResponseVO<AdminGoodsVO> updateGoods(AdminGoodsAggregationTO goodsAggregationTO) {
-        AdminGoodsBO adminGoodsBO = mallGoodsService.updateGoods(goodsAggregationTO);
+        GoodsBO adminGoodsBO = mallGoodsService.updateGoods(goodsAggregationTO);
         AdminGoodsVO vo = new AdminGoodsVO();
         BeanUtils.copyProperties(adminGoodsBO, vo);
         return ResponseVO.ok(vo);

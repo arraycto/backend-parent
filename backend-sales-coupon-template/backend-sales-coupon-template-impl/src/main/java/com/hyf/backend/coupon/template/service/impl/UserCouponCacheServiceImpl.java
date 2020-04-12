@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -103,6 +102,13 @@ public class UserCouponCacheServiceImpl implements UserCouponCacheService, Initi
             default:
                 return false;
         }
+    }
+
+    @Override
+    public UserCouponBO getUserCouponSingle(Integer uid, Integer couponId, Integer status) {
+        List<UserCouponBO> userCouponList = getUserCoupon((long) uid, status);
+        return userCouponList.stream().filter(coupon -> coupon.getId().equals((long) couponId)).findFirst()
+                .orElse(new UserCouponBO());
     }
 
     private boolean addExpiredCouponToCache(Long uid, List<UserCouponBO> userCouponBO) {
@@ -216,12 +222,13 @@ public class UserCouponCacheServiceImpl implements UserCouponCacheService, Initi
 
         stringRedisTemplate.opsForHash().putAll(redisKey, needCacheMap);
         log.info("save to cache... coupon: {}", JSON.toJSONString(userCouponBO));
-        stringRedisTemplate.expire(redisKey, getRandomExpirationTime(1, 2), TimeUnit.SECONDS);
+        Long randomExpirationTime = getRandomExpirationTime(1, 2);
+        stringRedisTemplate.expire(redisKey, randomExpirationTime, TimeUnit.SECONDS);
 
         //往zset中添加一个id
         Set<ZSetOperations.TypedTuple<String>> defaultTypedTupleSet = userCouponBO.stream().map(bo -> new DefaultTypedTuple<>(String.valueOf(bo.getId()), (double) bo.getGetTime().getTime())).collect(Collectors.toSet());
         stringRedisTemplate.opsForZSet().add(redisKeyZset, defaultTypedTupleSet);
-        stringRedisTemplate.expire(redisKeyZset, getRandomExpirationTime(1, 2), TimeUnit.SECONDS);
+        stringRedisTemplate.expire(redisKeyZset, randomExpirationTime, TimeUnit.SECONDS);
         return true;
     }
 

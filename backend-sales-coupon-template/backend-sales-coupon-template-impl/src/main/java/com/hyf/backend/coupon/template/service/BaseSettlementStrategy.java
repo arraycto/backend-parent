@@ -38,7 +38,7 @@ public abstract class BaseSettlementStrategy {
     protected BigDecimal calcProductCostPrice(UserSettlementDTO userSettlementDTO) {
         BigDecimal cost = BigDecimal.ZERO;
         for (ProductDTO productDTO : userSettlementDTO.getProductDTOList()) {
-            cost.add(productDTO.getPrice().multiply(BigDecimal.valueOf(productDTO.getCount())));
+            cost = cost.add(productDTO.getPrice().multiply(BigDecimal.valueOf(productDTO.getCount())));
         }
         return cost;
     }

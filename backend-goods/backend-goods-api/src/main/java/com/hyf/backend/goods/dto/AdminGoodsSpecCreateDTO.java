@@ -1,5 +1,6 @@
 package com.hyf.backend.goods.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,9 @@ import java.io.Serializable;
  * @Email: yfelvis@gmail.com
  * @Desc: TODO
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AdminGoodsSpecCreateDTO implements Serializable {
     private Integer id;
 
@@ -22,43 +26,4 @@ public class AdminGoodsSpecCreateDTO implements Serializable {
 
     private String picUrl;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getGoodsId() {
-        return goodsId;
-    }
-
-    public void setGoodsId(Integer goodsId) {
-        this.goodsId = goodsId;
-    }
-
-    public String getSpecification() {
-        return specification;
-    }
-
-    public void setSpecification(String specification) {
-        this.specification = specification;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getPicUrl() {
-        return picUrl;
-    }
-
-    public void setPicUrl(String picUrl) {
-        this.picUrl = picUrl;
-    }
 }

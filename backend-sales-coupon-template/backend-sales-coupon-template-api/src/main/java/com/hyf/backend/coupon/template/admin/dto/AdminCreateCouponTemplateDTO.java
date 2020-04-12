@@ -17,7 +17,6 @@ import java.util.List;
 public class AdminCreateCouponTemplateDTO {
     @NotNull(message = "标题不能为空")
     private String title;
-    @NotNull(message = "logo不能为空")
     private String logo;
     @NotNull(message = "优惠券总数不能为空")
     @Min(value = 1)

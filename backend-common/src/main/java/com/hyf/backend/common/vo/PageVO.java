@@ -25,12 +25,19 @@ public class PageVO<T> extends ListVO<T> {
     private Integer pageSize;
     private Integer pageNo;
     private Long total;
+    //总页数
+    private int totalPages;
 
     public PageVO(List<T> list, Integer pageSize, Integer pageNo, Long total) {
         super(list);
         this.pageSize = pageSize;
         this.pageNo = pageNo;
         this.total = total;
+        if (pageSize > 0) {
+            totalPages = (int) (total / pageSize + ((total % pageSize == 0) ? 0 : 1));
+        } else {
+            totalPages = 0;
+        }
     }
 
     public <I> PageVO(PageListBO<I> pageList, Function<? super I, ? extends T> mapper) {
@@ -39,4 +46,14 @@ public class PageVO<T> extends ListVO<T> {
                 pageList.getPageNo(),
                 pageList.getTotal());
     }
+
+    public int getTotalPages() {
+        if (pageSize > 0) {
+            totalPages = (int) (total / pageSize + ((total % pageSize == 0) ? 0 : 1));
+        } else {
+            totalPages = 0;
+        }
+        return totalPages;
+    }
+
 }

@@ -88,4 +88,9 @@ public class MallTopicServiceImpl implements MallTopicService {
         resultMap.put("topic", mallTopic);
         return resultMap;
     }
+
+    @Override
+    public List<MallTopic> listTopicLimit() {
+        return  topicMapper.selectLimit5();
+    }
 }

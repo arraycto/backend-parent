@@ -45,6 +45,10 @@ public class CouponTemplateDO extends DateAndAuthorTraceableDO {
 
     private List weight;
 
+    private String tag;
+
+    private String desc;
+
     private Integer createUser;
 
     private Integer updateUser;
@@ -203,6 +207,22 @@ public class CouponTemplateDO extends DateAndAuthorTraceableDO {
 
     public void setWeight(List weight) {
         this.weight = weight;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag == null ? null : tag.trim();
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc == null ? null : desc.trim();
     }
 
     public Integer getCreateUser() {

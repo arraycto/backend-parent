@@ -1,0 +1,91 @@
+server:
+  port: 8086
+  servlet:
+    context-path: /order-service
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    registry-fetch-interval-seconds: 5
+  instance:
+    metadata-map:
+      version: 1
+mybatis-plus:
+#  mapper-locations: classpath*:mapper/*.xml
+  global-config:
+    id-type: 0
+    db-column-underline: false
+    refresh-mapper: true
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: jdbc:mysql://127.0.0.1:33061/coupon?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=UTC
+    username: huyufei
+    password: gdhuyufei
+    filters: log4j,wall,mergeStat
+    type: com.zaxxer.hikari.HikariDataSource
+  main:
+    allow-bean-definition-overriding: true
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    timeout: 10000
+  sleuth:
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://localhost:9411
+#app:
+#  id: user-service
+#apollo:
+#  meta: http://localhost:8080
+#  bootstrap:
+#    enabled: true
+#    namespaces: hyf
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+feign:
+  httpclient:
+    connection-timeout: 3000
+    enabled: true
+  hystrix:
+    enabled: true
+#  compression:
+#    response:
+#      enabled: true
+#    request:
+#      enabled: true
+ribbon:
+  eager-load:
+    enabled: true
+  ConnectTimeout: 2000
+  ReadTimeout: 2000
+  MaxAutoRetries: 2
+  MaxAutoRetriesNextServer: 1
+  OkToRetryOnAllOperations: true
+  ServetListRefreshInterval: 3000
+#    com.hyf.backendw
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: test-topic-producer-group
+
+logging:
+  level:
+    com.hyf.backend.coupon.template.feign.UserServiceApiClient: DEBUG

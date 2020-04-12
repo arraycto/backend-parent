@@ -47,9 +47,9 @@ public abstract class AbstractZuulFilter extends ZuulFilter {
         //不再执行其他的过滤器和逻辑了
         requestContext.setSendZuulResponse(false);
         requestContext.getResponse().setContentType("application/json;charset=utf-8");
-        requestContext.setResponseStatusCode(httpStatusCode);
+        requestContext.setResponseStatusCode(200);
         ResponseVO<String> responseVO = new ResponseVO<>();
-        responseVO.setCode(bizCode);
+        responseVO.setCode(401);
         responseVO.setData(null);
         responseVO.setMsg(errorMsg);
         requestContext.setResponseBody(JSON.toJSONString(responseVO));

@@ -31,19 +31,27 @@ zuul:
     user-service:
       path: /user-service/**
       serviceId: user-service
-#     false时候前缀不会被移除
-      strip-refix: false
+      strip-prefix: false
       sensitiveHeaders:
     goods-service:
       path: /goods-service/**
       serviceId: goods-service
-      #     false时候前缀不会被移除
-      strip-refix: false
+      strip-prefix: false
+      sensitiveHeaders:
+    portal-service:
+      path: /portal-service/**
+      serviceId: portal-service
+      strip-prefix: false
+      sensitiveHeaders:
+    order-service:
+      path: /order-service/**
+      serviceId: order-service
+      strip-prefix: false
       sensitiveHeaders:
   prefix: /api
   host:
     connect-timeout-millis: 10000
-    socket-timeout-millis: 60000
+    socket-timeout-millis: 6990000
   ribbon:
     eager-load:
       enabled: true
@@ -59,7 +67,7 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 100000
+            timeoutInMilliseconds: 999999999
           strategy: thread
   threadpool:
     default:
@@ -81,7 +89,7 @@ ribbon:
 #    ReadTimeout: 2000
 #    ConnectTimeout: 1000
 #    MaxAutoRetries: 1
-logging:
-  level:
-    com.netflix: debug
+#logging:
+#  level:
+#    com.netflix: debug
 #    MaxAutoRetriesNextServer: 1

@@ -6,32 +6,54 @@ import com.hyf.backend.common.domain.PageListBO;
 import com.hyf.backend.common.domain.QueryPageDTO;
 import com.hyf.backend.common.message.UserCouponExpiredMessage;
 import com.hyf.backend.common.mybatis.mapper.MapperHelper;
+import com.hyf.backend.common.vo.ListVO;
+import com.hyf.backend.coupon.template.api.dto.ApiCouponSettlementDTO;
 import com.hyf.backend.coupon.template.api.dto.ApiQueryIdsDTO;
+import com.hyf.backend.coupon.template.api.dto.ProductDTO;
+import com.hyf.backend.coupon.template.api.dto.UserSettlementDTO;
+import com.hyf.backend.coupon.template.api.vo.ApiCouponSettlementVO;
+import com.hyf.backend.coupon.template.api.vo.ApiCouponTemplateVO;
+import com.hyf.backend.coupon.template.api.vo.ApiUserCouponVO;
 import com.hyf.backend.coupon.template.bo.CouponTemplateBO;
 import com.hyf.backend.coupon.template.bo.UserCouponBO;
+import com.hyf.backend.coupon.template.bo.UserSettlementBO;
+import com.hyf.backend.coupon.template.constant.CouponDiscountCategoryEnum;
 import com.hyf.backend.coupon.template.constant.CouponTemplateExpirationEnum;
 import com.hyf.backend.coupon.template.constant.UserCouponStatusEnum;
 import com.hyf.backend.coupon.template.dataobject.UserCouponDO;
 import com.hyf.backend.coupon.template.dataobject.UserCouponDOExample;
+import com.hyf.backend.coupon.template.feign.ApiCartClient;
+import com.hyf.backend.coupon.template.feign.ApiGoodsClient;
 import com.hyf.backend.coupon.template.mapper.UserCouponDOMapper;
 import com.hyf.backend.coupon.template.service.CouponTemplateService;
 import com.hyf.backend.coupon.template.service.UserCouponCacheService;
 import com.hyf.backend.coupon.template.service.UserCouponService;
-import com.hyf.backend.coupon.template.service.helper.CouponClassify;
+import com.hyf.backend.coupon.template.service.helper.CouponDiscountTypeClassify;
+import com.hyf.backend.coupon.template.service.helper.CouponExpiredClassify;
+import com.hyf.backend.goods.api.vo.ApiGoodsSkuVO;
+import com.hyf.backend.goods.api.vo.ApiUserCartVO;
+import com.hyf.backend.goods.dto.ApiSkuIdListQueryDTO;
+import com.hyf.backend.utils.common.vo.ResponseVO;
 import com.hyf.backend.utils.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +72,16 @@ public class UserCouponServiceImpl implements UserCouponService {
     private CouponTemplateService couponTemplateService;
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
+    @Autowired
+    private ApiGoodsClient goodsClient;
+    @Autowired
+    private ApiCartClient cartClient;
+    @Autowired
+    private ManjianSettlementStrategy manjianSettlementStrategy;
+    @Autowired
+    private LijianSettlementStrategy lijianSettlementStrategy;
+    @Autowired
+    private ZhekouSettlementStrategy zhekouSettlementStrategy;
 
     @Override
     public PageListBO<UserCouponBO> listByUidAndType(Long uid, Integer status, QueryPageDTO queryPageDTO) {
@@ -94,7 +126,7 @@ public class UserCouponServiceImpl implements UserCouponService {
         }
         //如果取到的是可用的优惠券，还要对优惠券判断是否过期了
         if (status.equals(UserCouponStatusEnum.USABLE.getCode())) {
-            CouponClassify classify = CouponClassify.classify(preTarget.getList());
+            CouponExpiredClassify classify = CouponExpiredClassify.classify(preTarget.getList());
             if (CollectionUtils.isNotEmpty(classify.getExpiredList())) {
                 log.info("Add Expired Coupons To Cache From FindCouponsByStatus: " +
                         "{}, {}", uid, status);
@@ -118,6 +150,9 @@ public class UserCouponServiceImpl implements UserCouponService {
                 filter(template -> template.getExpirationDeadline().getTime() > new Date().getTime()).collect(Collectors.toList());
         log.info("Find Usable Template Count: {}", availableCouponTemplateList.size());
 
+        if (uid == null) {
+            return availableCouponTemplateList;
+        }
         List<UserCouponBO> userUsableCouponList = userCouponCacheService.getUserCoupon(uid, UserCouponStatusEnum.USABLE.getCode());
         List<UserCouponBO> userUsedCouponList = userCouponCacheService.getUserCoupon(uid, UserCouponStatusEnum.USED.getCode());
         List<UserCouponBO> userExpiredCouponList = userCouponCacheService.getUserCoupon(uid, UserCouponStatusEnum.EXPIRED.getCode());
@@ -269,7 +304,7 @@ public class UserCouponServiceImpl implements UserCouponService {
         Map<Long, List<UserCouponBO>> couponTemplateIdToUserUsedCouponListMap = userUsedCouponList.stream().collect(Collectors.groupingBy(UserCouponBO::getTemplateId));
         Map<Long, List<UserCouponBO>> couponTemplateIdToUserExpiredListMap = userExpiredCouponList.stream().collect(Collectors.groupingBy(UserCouponBO::getTemplateId));
 
-        //又分为八种情况
+        //s分为八种情况
         //1. 有      没有              没有
         //2. 有，    没有，            有
         //3. 有      有                没有
@@ -417,5 +452,258 @@ public class UserCouponServiceImpl implements UserCouponService {
         }
 
         return userCouponBOList;
+    }
+
+    public List<UserCouponBO> getUserAvailableMatchGoodsCouponList(long uid, List<ApiGoodsSkuVO> skuVOList) {
+        //找到用户所有可用的优惠券
+        PageListBO<UserCouponBO> userCouponBOPageListBO = listByUidAndType(uid, UserCouponStatusEnum.USABLE.getCode(), new QueryPageDTO().setPageNo(1).setPageSize(Integer.MAX_VALUE));
+        List<UserCouponBO> userCouponBOList = userCouponBOPageListBO.getList();
+        Map<Long, UserCouponBO> couponIdToCouponMap = userCouponBOList.stream().collect(Collectors.toMap(UserCouponBO::getId, coupon -> coupon));
+        //筛选出和当前商品匹配的优惠券，每一个优惠券支持的商品类型和
+        List<UserCouponBO> matchCouponList = new ArrayList<>();
+//            [1, 3, 2]        [[1,2,3,4],[3,4]]
+        Set<Long> matchCouponIdSet = new HashSet<>();
+        for (ApiGoodsSkuVO skuVO : skuVOList) {
+            for (UserCouponBO userCouponBO : userCouponBOList) {
+                List<Integer> goodsTypeLimitation = userCouponBO.getCouponTemplateBO().getGoodsTypeLimitation();
+                //判断交集
+                if (goodsTypeLimitation.contains(skuVO.getGoods().getCategoryId())) {
+                    matchCouponIdSet.add(userCouponBO.getId());
+                }
+            }
+        }
+
+        for (Long matchCouponId : matchCouponIdSet) {
+            if (couponIdToCouponMap.containsKey(matchCouponId)) {
+                matchCouponList.add(couponIdToCouponMap.get(matchCouponId));
+            }
+        }
+        return matchCouponList;
+    }
+
+    @Override
+    public List<ApiUserCouponVO> listMatchCartGoodsCouponList(Integer uid, Integer cartId) {
+        if (cartId == null) {
+            //查询用户所有已勾选的商品
+            //从已经勾选的购物车中找到商品，然后和可用的优惠券做规则筛选
+            ResponseVO<ListVO<ApiUserCartVO>> checkedGoods = cartClient.findCheckedGoods(uid);
+            if (!checkedGoods.isOk()) {
+                throw new BizException(checkedGoods.getMsg());
+            }
+            List<ApiUserCartVO> cartList = checkedGoods.getData().getList();
+//            Map<Integer, ApiUserCartVO> cartIdToCartMap = cartList.stream().collect(Collectors.toMap(ApiUserCartVO::getId, cart -> cart));
+            List<Integer> skuIdList = cartList.stream().map(ApiUserCartVO::getSkuId).collect(Collectors.toList());
+            ResponseVO<ListVO<ApiGoodsSkuVO>> skuListVORes = goodsClient.findBySkuList(new ApiSkuIdListQueryDTO(skuIdList));
+
+            if (!skuListVORes.isOk()) {
+                throw new BizException(skuListVORes.getMsg());
+            }
+            List<ApiGoodsSkuVO> skuVOList = skuListVORes.getData().getList();
+//            Map<Integer, ApiGoodsSkuVO> skuIdToSkuMap = skuVOList.stream().collect(Collectors.toMap(ApiGoodsSkuVO::getId, sku -> sku));
+            List<UserCouponBO> matchCouponList = getUserAvailableMatchGoodsCouponList(uid, skuVOList);
+
+            List<ApiUserCouponVO> voList = new ArrayList<>();
+            for (UserCouponBO userCouponBO : matchCouponList) {
+                ApiUserCouponVO userCouponVO = new ApiUserCouponVO();
+                BeanUtils.copyProperties(userCouponBO, userCouponVO);
+                ApiCouponTemplateVO templateVO = new ApiCouponTemplateVO();
+                BeanUtils.copyProperties(userCouponBO.getCouponTemplateBO(), templateVO);
+                userCouponVO.setCouponTemplate(templateVO);
+
+
+                if (userCouponVO.getCouponTemplate().getExpirationCode().equals(CouponTemplateExpirationEnum.GUDING.getCode())) {
+                    long startTime = System.currentTimeMillis() / 1000;
+                    long endTime = userCouponVO.getCouponTemplate().getExpirationDeadline().getTime() / 1000;
+                    userCouponVO.setStartTime(startTime);
+                    userCouponVO.setEndTime(endTime);
+                } else if (userCouponVO.getCouponTemplate().getExpirationCode().equals(CouponTemplateExpirationEnum.SHIFT.getCode())) {
+                    long startTime = userCouponVO.getGetTime().getTime() / 1000;
+                    long endTime = userCouponVO.getGetTime().getTime() + new DateTime(userCouponVO.getGetTime().getTime()).plusDays(userCouponVO.getCouponTemplate().getExpirationGap()).toDate().getTime();
+                    userCouponVO.setStartTime(startTime);
+                    userCouponVO.setEndTime(endTime);
+                }
+                voList.add(userCouponVO);
+            }
+            return voList;
+        } else {
+
+        }
+        return null;
+    }
+
+    @Override
+    public ApiCouponSettlementVO settlementCheckedGoods(ApiCouponSettlementDTO settlementDTO) {
+        Integer cartId = settlementDTO.getCartId();
+        ApiCouponSettlementVO settlementVO = new ApiCouponSettlementVO();
+        //结算勾选的商品
+        if (null == cartId) {
+
+            //从已经勾选的购物车中找到商品，然后和可用的优惠券做规则筛选
+            ResponseVO<ListVO<ApiUserCartVO>> checkedGoods = cartClient.findCheckedGoods(settlementDTO.getUid());
+            if (!checkedGoods.isOk()) {
+                throw new BizException(checkedGoods.getMsg());
+            }
+            List<ApiUserCartVO> cartList = checkedGoods.getData().getList();
+            Map<Integer, ApiUserCartVO> cartIdToCartMap = cartList.stream().collect(Collectors.toMap(ApiUserCartVO::getId, cart -> cart));
+            List<Integer> skuIdList = cartList.stream().map(ApiUserCartVO::getSkuId).collect(Collectors.toList());
+            ResponseVO<ListVO<ApiGoodsSkuVO>> skuListVORes = goodsClient.findBySkuList(new ApiSkuIdListQueryDTO(skuIdList));
+
+            if (!skuListVORes.isOk()) {
+                throw new BizException(skuListVORes.getMsg());
+            }
+            List<ApiGoodsSkuVO> skuVOList = skuListVORes.getData().getList();
+            Map<Integer, ApiGoodsSkuVO> skuIdToSkuMap = skuVOList.stream().collect(Collectors.toMap(ApiGoodsSkuVO::getId, sku -> sku));
+            //没有勾选优惠券，找到优惠力度最大的
+            Integer couponId = settlementDTO.getCouponId();
+            if (null == couponId) {
+                List<UserCouponBO> matchCouponList = getUserAvailableMatchGoodsCouponList(settlementDTO.getUid(), skuVOList);
+                //matchCouponList是当前用户购物车中商品的匹配的优惠券,从中计算出优惠力度最大的
+
+
+                BigDecimal totalGoodsPrice = BigDecimal.ZERO;
+                //计算购物车中商品的总价
+                for (ApiUserCartVO cartVO : cartList) {
+                    totalGoodsPrice = totalGoodsPrice.add(cartVO.getPrice().multiply(BigDecimal.valueOf(cartVO.getNumber())));
+                }
+                settlementVO.setTotalGoodsPrice(totalGoodsPrice);
+                if (CollectionUtils.isEmpty(matchCouponList)) {
+                    settlementVO.setCost(totalGoodsPrice);
+                    settlementVO.setUserAvailableCouponList(new ArrayList<>());
+                    settlementVO.setDiscountPrice(BigDecimal.ZERO);
+                    settlementVO.setEmploy(false);
+//                    settlementVO.setTotalGoodsPrice(totalGoodsPrice);
+                    return settlementVO;
+                }
+
+
+                //这里有多个优惠券分类，将立减、折扣、满减三类优惠券分类搞个集合装起来，然后分别从这三类集合中找到各自类别中优惠力度最大的，然后三个出来的在进行和商品总价格计算出优惠力度最大的
+                CouponDiscountTypeClassify discountTypeClassify = CouponDiscountTypeClassify.classify(matchCouponList);
+
+                UserCouponBO maxDiscountFromLijian = discountTypeClassify.getMaxDiscountFromLijian();
+                UserCouponBO maxDiscountFromManjian = discountTypeClassify.getMaxDiscountFromManjian();
+                UserCouponBO maxDiscountFromzhekou = discountTypeClassify.getMaxDiscountFromzhekou();
+
+                //从这三类优惠券中和商品总价进行计算
+                BigDecimal afterLijianPrice = null;
+                BigDecimal afterManjianPrice = null;
+                BigDecimal afterzhekouPrice = null;
+
+                Map<BigDecimal, BigDecimal> afterDiscountMap = new HashMap<>(3);
+                Map<BigDecimal, UserCouponBO> afterDiscountCouponMap = new HashMap<>(3);
+                if (null != maxDiscountFromLijian) {
+                    Integer lijianQuota = maxDiscountFromLijian.getCouponTemplateBO().getLijianQuota();
+                    afterLijianPrice = totalGoodsPrice.subtract(BigDecimal.valueOf(lijianQuota));
+                    afterDiscountMap.put(afterLijianPrice, BigDecimal.valueOf(lijianQuota));
+                    afterDiscountCouponMap.put(afterLijianPrice, maxDiscountFromLijian);
+                }
+
+                if (null != maxDiscountFromManjian) {
+                    if (totalGoodsPrice.compareTo(BigDecimal.valueOf(maxDiscountFromManjian.getCouponTemplateBO().getDiscountBase())) > 0) {
+                        //达到满减基准
+                        afterManjianPrice = totalGoodsPrice.subtract(BigDecimal.valueOf(maxDiscountFromManjian.getCouponTemplateBO().getManjianQuota()));
+                        afterDiscountMap.put(afterManjianPrice, BigDecimal.valueOf(maxDiscountFromManjian.getCouponTemplateBO().getManjianQuota()));
+                        afterDiscountCouponMap.put(afterManjianPrice, maxDiscountFromManjian);
+                    }
+                }
+
+                if (null != maxDiscountFromzhekou) {
+                    Integer zhekouQuota = maxDiscountFromzhekou.getCouponTemplateBO().getZhekouQuota();
+                    afterzhekouPrice = totalGoodsPrice.multiply(BigDecimal.valueOf(zhekouQuota).multiply(BigDecimal.valueOf(1.0)).divide(BigDecimal.valueOf(100)));
+                    afterzhekouPrice = totalGoodsPrice.subtract(afterzhekouPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
+                    BigDecimal subtract = totalGoodsPrice.subtract(afterzhekouPrice);
+                    afterDiscountMap.put(afterzhekouPrice, subtract);
+                    afterDiscountCouponMap.put(afterzhekouPrice, maxDiscountFromzhekou);
+                }
+
+
+                BigDecimal afterMaxDiscountPrice = BigDecimal.valueOf(Integer.MAX_VALUE);
+
+                List<BigDecimal> bigDecimals = Arrays.asList(afterLijianPrice, afterManjianPrice, afterzhekouPrice);
+                for (BigDecimal price : bigDecimals) {
+                    if (price != null && price.compareTo(afterMaxDiscountPrice) < 0) {
+                        afterMaxDiscountPrice = price;
+                    }
+
+                }
+
+                settlementVO.setCost(afterMaxDiscountPrice);
+                if (afterDiscountMap.containsKey(afterMaxDiscountPrice)) {
+                    settlementVO.setDiscountPrice(afterDiscountMap.get(afterMaxDiscountPrice));
+                }
+                if (afterDiscountCouponMap.containsKey(afterMaxDiscountPrice)) {
+                    Long id = afterDiscountCouponMap.get(afterMaxDiscountPrice).getId();
+                    settlementVO.setMaxDiscountCouponId(id.intValue());
+                }
+                List<ApiUserCouponVO> voList = new ArrayList<>();
+                for (UserCouponBO userCouponBO : matchCouponList) {
+                    ApiUserCouponVO userCouponVO = new ApiUserCouponVO();
+                    BeanUtils.copyProperties(userCouponBO, userCouponVO);
+                    ApiCouponTemplateVO templateVO = new ApiCouponTemplateVO();
+                    BeanUtils.copyProperties(userCouponBO.getCouponTemplateBO(), templateVO);
+                    userCouponVO.setCouponTemplate(templateVO);
+                    voList.add(userCouponVO);
+                }
+                settlementVO.setUserAvailableCouponList(voList);
+                return settlementVO;
+            } else {
+                //从已经勾选的购物车中找到商品，然后和给定的优惠券做规则筛选
+
+                UserCouponBO userCouponBO = getUserCouponById(settlementDTO.getUid(), couponId, UserCouponStatusEnum.USABLE.getCode());
+                UserSettlementDTO settlementDTO1 = new UserSettlementDTO();
+                settlementDTO1.setEmploy(false);
+                List<ProductDTO> productDTOList = new ArrayList<>();
+                for (ApiUserCartVO cartVO : cartList) {
+                    ProductDTO productDTO = new ProductDTO();
+                    productDTO.setPrice(cartVO.getPrice());
+                    productDTO.setCount(cartVO.getNumber().intValue());
+                    Integer skuId = cartVO.getSkuId();
+                    if (skuIdToSkuMap.containsKey(skuId)) {
+                        productDTO.setType(skuIdToSkuMap.get(skuId).getGoods().getCategoryId());
+                    }
+                    productDTOList.add(productDTO);
+                }
+                settlementDTO1.setProductDTOList(productDTOList);
+                settlementDTO1.setUserCouponIdList(Collections.singletonList(userCouponBO.getId()));
+                UserSettlementBO settlement;
+                if (userCouponBO.getCouponTemplateBO().getDiscountCategory().equals(CouponDiscountCategoryEnum.ZHEKOU.getCode())) {
+                    settlement = zhekouSettlementStrategy.settlement(settlementDTO1);
+                } else if (userCouponBO.getCouponTemplateBO().getDiscountCategory().equals(CouponDiscountCategoryEnum.MANJIAN.getCode())) {
+                    settlement = manjianSettlementStrategy.settlement(settlementDTO1);
+                } else {
+                    settlement = lijianSettlementStrategy.settlement(settlementDTO1);
+                }
+                settlementVO.setDiscountPrice(settlement.getTotalGoodsPrice().subtract(settlement.getCost()));
+                settlementVO.setCost(settlement.getCost());
+                List<UserCouponBO> userAvailableMatchGoodsCouponList = getUserAvailableMatchGoodsCouponList(settlementDTO.getUid(), skuVOList);
+                List<ApiUserCouponVO> voList = new ArrayList<>();
+                for (UserCouponBO bo : userAvailableMatchGoodsCouponList) {
+                    ApiUserCouponVO userCouponVO = new ApiUserCouponVO();
+                    BeanUtils.copyProperties(bo, userCouponVO);
+                    ApiCouponTemplateVO templateVO = new ApiCouponTemplateVO();
+                    BeanUtils.copyProperties(bo.getCouponTemplateBO(), templateVO);
+                    userCouponVO.setCouponTemplate(templateVO);
+                    voList.add(userCouponVO);
+                }
+                settlementVO.setUserAvailableCouponList(voList);
+                settlementVO.setTotalGoodsPrice(settlement.getTotalGoodsPrice());
+                return settlementVO;
+            }
+        } else {
+            //TODO
+            Integer couponId = settlementDTO.getCouponId();
+            //从已经勾选的购物车中找到商品，然后和可用的优惠券做规则筛选
+            if (null == couponId) {
+
+            } else {
+                //从已经勾选的购物车中找到商品，然后和给定的优惠券结算优惠
+            }
+        }
+        return null;
+    }
+
+    public UserCouponBO getUserCouponById(Integer uid, Integer couponId, Integer status) {
+        PageListBO<UserCouponBO> userCouponBOPageListBO = listByUidAndType((long) uid, status, new QueryPageDTO().setPageNo(1).setPageSize(Integer.MAX_VALUE));
+        List<UserCouponBO> list = userCouponBOPageListBO.getList();
+        return list.stream().filter(coupon -> coupon.getId().equals((long) couponId)).findFirst().orElseThrow(() -> new BizException("优惠券不存在"));
     }
 }

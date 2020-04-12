@@ -19,6 +19,9 @@
         <module>spring-source-study</module>
         <module>backend-goods</module>
 		<module>backend-portal</module>
+        <module>backend-order</module>
+		<module>backend-order/backend-order-api</module>
+		<module>backend-order/backend-order-impl</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>

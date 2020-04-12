@@ -56,24 +56,23 @@ public class ApiCouponTemplateVO {
     /**
      * 失效日期，两类规则都有效
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date expirationDeadline;
 
     /**
      * 折扣表示折扣了多少如85折，满减表示满减了多少比如100，立减表示立减了多少
      */
-    private Integer discountQuota;
+    private Integer manjianQuota;
+
+    private Integer lijianQuota;
+
+    private Integer zhekouQuota;
 
     /**
      * 满减基准
      */
     private Integer discountBase;
 
-    private Integer manjianQuota;
-
-    private Integer lijianQuota;
-
-    private Integer zhekouQuota;
     /**
      * 每人领取优惠券限制
      */
@@ -89,9 +88,12 @@ public class ApiCouponTemplateVO {
      */
     private List<String> weight;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private String tag;
+
+    private String desc;
+
     private Date createTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
     private Date updateTime;
 
 

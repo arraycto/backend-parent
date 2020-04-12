@@ -14,6 +14,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author: Elvis on 2020/4/5
  * @Email: yfelvis@gmail.com
@@ -50,5 +52,16 @@ public class MallBrandServiceImpl implements MallBrandService {
         BeanUtils.copyProperties(brandUpdateDTO, toUpdate);
         mallBrandMapper.updateByPrimaryKeySelective(toUpdate);
         return new AdminBrandBO(mallBrandMapper.selectByPrimaryKey(id));
+    }
+
+    @Override
+    public List<MallBrand> listAll() {
+        List<MallBrand> mallBrands = mallBrandMapper.selectAll();
+        return mallBrands;
+    }
+
+    @Override
+    public MallBrand findById(Integer brandId) {
+        return MapperHelper.selectByPrimaryKeyGuaranteed(mallBrandMapper, brandId);
     }
 }

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class RateLimitFilter extends AbstractPreFilter {
     //每秒获取两个令牌
-    private RateLimiter rateLimiter = RateLimiter.create(2.0);
+    private RateLimiter rateLimiter = RateLimiter.create(20.0);
 
     @Override
     protected Object doRun() {

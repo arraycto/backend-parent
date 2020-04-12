@@ -98,4 +98,35 @@ public class MallGoodsCategoryServiceImpl implements MallGoodsCategoryService {
         example.createCriteria().andLevelEqualTo("L2");
         return categoryMapper.selectByExample(example).stream().map(AdminGoodsCategoryBO::new).collect(Collectors.toList());
     }
+
+    @Override
+    public List<MallGoodsCategory> listL1Simple() {
+        MallGoodsCategoryExample example = new MallGoodsCategoryExample();
+        example.createCriteria().andLevelEqualTo("L1");
+        return categoryMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<MallGoodsCategory> listNaBarByL1(Integer l1id) {
+        MallGoodsCategoryExample example = new MallGoodsCategoryExample();
+        example.createCriteria().andLevelEqualTo("L2").andPidEqualTo(l1id);
+        return categoryMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<MallGoodsCategory> listNaBarByL2(Integer l2id) {
+        MallGoodsCategoryExample example = new MallGoodsCategoryExample();
+        example.createCriteria().andLevelEqualTo("L2").andIdEqualTo(l2id);
+        List<MallGoodsCategory> mallGoodsCategories = categoryMapper.selectByExample(example);
+        if (mallGoodsCategories.size() > 1) {
+            throw new BizException("出现两个同名的二级分类");
+        }
+        MallGoodsCategory category = mallGoodsCategories.get(0);
+        return listNaBarByL1(category.getPid());
+    }
+
+    @Override
+    public MallGoodsCategory findById(Integer l2id) {
+        return MapperHelper.selectByPrimaryKeyGuaranteed(categoryMapper, l2id);
+    }
 }

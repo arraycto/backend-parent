@@ -3,6 +3,7 @@ package com.hyf.backend.common.web;
 import com.hyf.backend.common.annotation.CurrentUser;
 import com.hyf.backend.common.constant.Constant;
 import com.hyf.backend.common.context.ContextHolder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -20,12 +21,15 @@ import java.util.Optional;
 public class ApiUidParamArgsResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getMethodAnnotation(CurrentUser.class) != null;
+        return parameter.hasParameterAnnotation(CurrentUser.class);
     }
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String uid = ContextHolder.getCurrentContext().get(Constant.X_UID);
-        return Optional.ofNullable(uid).orElseThrow(() -> new MissingServletRequestPartException(uid + " current user"));
+        if (StringUtils.isEmpty(uid)) {
+            return null;
+        }
+        return Optional.of(Integer.valueOf(uid)).orElseThrow(() -> new MissingServletRequestPartException(uid + " current user"));
     }
 }

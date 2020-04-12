@@ -64,4 +64,9 @@ public class BannerServiceImpl implements BannerService {
         }
         return new PageVO<>(voList, mallBannerPageListBO.getPageSize(), mallBannerPageListBO.getPageNo(), mallBannerPageListBO.getTotal());
     }
+
+    @Override
+    public List<MallBanner> listBanner() {
+        return bannerMapper.selectByLimit5();
+    }
 }

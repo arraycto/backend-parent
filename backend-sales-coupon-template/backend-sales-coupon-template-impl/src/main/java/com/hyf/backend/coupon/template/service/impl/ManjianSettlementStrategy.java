@@ -7,7 +7,6 @@ import com.hyf.backend.coupon.template.constant.CouponDiscountCategoryEnum;
 import com.hyf.backend.coupon.template.service.BaseSettlementStrategy;
 import com.hyf.backend.coupon.template.service.UserCouponService;
 import com.hyf.backend.coupon.template.service.UserCouponSettlementStrategy;
-import com.hyf.backend.utils.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ public class ManjianSettlementStrategy extends BaseSettlementStrategy implements
         boolean productTypeSatisfy = isProductTypeSatisfy(userSettlementDTO);
         BigDecimal costPrice = calcProductCostPrice(userSettlementDTO);
         if (!productTypeSatisfy) {
-            return new UserSettlementBO(Collections.emptyList(), costPrice, userSettlementDTO.getEmploy());
+            return new UserSettlementBO(Collections.emptyList(), costPrice, userSettlementDTO.getEmploy(), costPrice);
         }
         if (CollectionUtils.isNotEmpty(userCouponBOList)) {
             UserSettlementBO userSettlementBO = new UserSettlementBO();
@@ -51,15 +50,16 @@ public class ManjianSettlementStrategy extends BaseSettlementStrategy implements
             if (costPrice.compareTo(BigDecimal.valueOf(discountBase)) < 0) {
                 //比base小，不足满减的基准
                 log.error("没有达到满减的基准 base: {}", discountBase);
-                return new UserSettlementBO(Collections.emptyList(), BigDecimal.ZERO, userSettlementDTO.getEmploy());
+                return new UserSettlementBO(Collections.emptyList(), BigDecimal.ZERO, userSettlementDTO.getEmploy(), costPrice);
             }
 
             BigDecimal actualPrice = costPrice.subtract(BigDecimal.valueOf(userCouponBO.getCouponTemplateBO().getManjianQuota()));
             userSettlementBO.setCost(actualPrice.compareTo(minCost()) < 0 ? minCost() : actualPrice);
+            userSettlementBO.setTotalGoodsPrice(costPrice);
             return userSettlementBO;
         }
 
-        return new UserSettlementBO(Collections.emptyList(), BigDecimal.ZERO, userSettlementDTO.getEmploy());
+        return new UserSettlementBO(Collections.emptyList(), BigDecimal.ZERO, userSettlementDTO.getEmploy(), costPrice);
     }
 
     @Override

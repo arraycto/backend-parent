@@ -111,5 +111,16 @@
             <columnOverride column="is_deleted" javaType="java.lang.Boolean" jdbcType="TINYINT"/>
         </table>
 
+        <table tableName="mall_cart" domainObjectName="MallCart">
+            <property name="rootClass"
+                      value="com.hyf.backend.common.domain.DateAndAuthorTraceableDO"/>
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="create_time" javaType="java.util.Date"/>
+            <columnOverride column="update_time" javaType="java.util.Date"/>
+            <columnOverride column="specifications" javaType="java.util.List" typeHandler="com.hyf.backend.common.mybatis.typehandler.JsonListStringTypeHandler"/>
+            <columnOverride column="is_deleted" javaType="java.lang.Boolean" jdbcType="TINYINT"/>
+            <columnOverride column="checked" javaType="java.lang.Boolean" jdbcType="TINYINT"/>
+        </table>
+
     </context>
 </generatorConfiguration>
