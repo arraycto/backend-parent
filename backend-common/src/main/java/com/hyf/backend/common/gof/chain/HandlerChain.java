@@ -1,7 +1,7 @@
 package com.hyf.backend.common.gof.chain;
 
 /**
- * @Author: Elvis on 2020/3/25
+ * @Author: Elvis on 2020/4/23
  * @Email: yfelvis@gmail.com
  * @Desc: TODO
  */
@@ -10,25 +10,27 @@ public class HandlerChain {
     private Handler tail;
 
     public void addHandler(Handler handler) {
-        handler.setSuccessor(null);
-        if(head == null) {
+        handler.setNextHandler(null);
+        if (head == null) {
             head = handler;
             tail = handler;
         }
-        tail.setSuccessor(handler);
+        tail.setNextHandler(handler);
         tail = handler;
     }
-    public void handle() {
+
+    public void handle(String msg) {
         if(head != null) {
-            head.handle();
+            head.handle(msg);
         }
     }
 
-    public static void main(String[] args) {
-        HandlerChain handlerChain = new HandlerChain();
-        handlerChain.addHandler(new HandlerA());
-        handlerChain.addHandler(new HandlerB());
-        handlerChain.handle();
-    }
 
+    public static void main(String[] args) {
+        HandlerChain chain = new HandlerChain();
+        chain.addHandler(new HandlerA());
+        chain.addHandler(new HandlerB());
+        chain.addHandler(new HandlerC());
+        chain.handle("haha");
+    }
 }

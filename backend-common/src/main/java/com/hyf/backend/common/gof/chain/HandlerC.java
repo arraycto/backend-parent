@@ -5,11 +5,10 @@ package com.hyf.backend.common.gof.chain;
  * @Email: yfelvis@gmail.com
  * @Desc: TODO
  */
-public class HandlerA extends Handler{
-
+public class HandlerC extends Handler {
     @Override
     public boolean doHandle(String msg) {
-        System.out.println("handlerA " + msg);
+        System.out.println("HandlerC" + msg);
         return true;
     }
 }

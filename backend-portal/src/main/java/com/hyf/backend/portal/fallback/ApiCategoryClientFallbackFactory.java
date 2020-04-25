@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author: Elvis on 2020/4/8
@@ -38,6 +40,16 @@ public class ApiCategoryClientFallbackFactory implements FallbackFactory<ApiCate
             public ResponseVO<ApiCategoryCurrentVO> listNavBarByL2(Integer l2id) {
                 log.error("获取分类失败了");
                 return ResponseVO.ok(new ApiCategoryCurrentVO());
+            }
+
+            @Override
+            public ResponseVO<Map<String, Object>> catalogIndex(Integer id) {
+               return ResponseVO.ok(new HashMap<>());
+            }
+
+            @Override
+            public ResponseVO<Map<String, Object>> currentCatalog(Integer id) {
+                return ResponseVO.ok(new HashMap<>());
             }
         };
     }

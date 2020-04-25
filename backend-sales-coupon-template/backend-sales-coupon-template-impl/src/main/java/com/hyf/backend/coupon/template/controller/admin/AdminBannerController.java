@@ -23,7 +23,7 @@ public class AdminBannerController implements AdminBannerApi {
     private BannerService service;
 
     @Override
-    public ResponseVO<PageVO<AdminBannerVO>> findPageByQuery(@RequestBody AdminBannerQueryDTO queryDTO) {
+    public ResponseVO<PageVO<AdminBannerVO>> findPageByQuery( AdminBannerQueryDTO queryDTO) {
         PageVO<AdminBannerVO> pageByQuery = service.findPageByQuery(queryDTO);
         return ResponseVO.ok(pageByQuery);
     }
@@ -36,5 +36,10 @@ public class AdminBannerController implements AdminBannerApi {
     @Override
     public ResponseVO<AdminBannerVO> create(@RequestBody AdminBannerCreateDTO createDTO) {
         return ResponseVO.ok(service.createBanner(createDTO));
+    }
+
+    @Override
+    public ResponseVO<AdminBannerVO> get(AdminBannerQueryDTO dto) {
+        return null;
     }
 }

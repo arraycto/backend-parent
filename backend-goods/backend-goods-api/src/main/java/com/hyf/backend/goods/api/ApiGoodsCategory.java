@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Map;
+
 /**
  * @Author: Elvis on 2020/4/8
  * @Email: yfelvis@gmail.com
@@ -23,4 +25,11 @@ public interface ApiGoodsCategory {
 
     @GetMapping("/navbar-list-byl2")
     ResponseVO<ApiCategoryCurrentVO> listNavBarByL2(@RequestParam("l2id") Integer l2id);
+
+    @GetMapping("/index")
+    ResponseVO<Map<String, Object>> catalogIndex( Integer id);
+
+    @GetMapping("/current")
+    ResponseVO<Map<String, Object>> currentCatalog(Integer id);
+
 }

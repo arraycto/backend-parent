@@ -32,5 +32,9 @@ public interface MallGoodsCategoryService {
 
     List<MallGoodsCategory> listNaBarByL2(Integer l2id);
 
-    MallGoodsCategory findById(Integer l2id);
+    MallGoodsCategory findById(Integer id);
+
+    MallGoodsCategory findByIdL1(Integer id);
+
+    List<MallGoodsCategory> findByPidAndLevel(Integer id, String l2);
 }

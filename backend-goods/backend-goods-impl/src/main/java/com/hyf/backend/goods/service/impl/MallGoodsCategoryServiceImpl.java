@@ -126,7 +126,23 @@ public class MallGoodsCategoryServiceImpl implements MallGoodsCategoryService {
     }
 
     @Override
-    public MallGoodsCategory findById(Integer l2id) {
-        return MapperHelper.selectByPrimaryKeyGuaranteed(categoryMapper, l2id);
+    public MallGoodsCategory findById(Integer id) {
+        return MapperHelper.selectByPrimaryKeyGuaranteed(categoryMapper, id);
+    }
+
+    @Override
+    public MallGoodsCategory findByIdL1(Integer id) {
+        MallGoodsCategoryExample example = new MallGoodsCategoryExample();
+        example.createCriteria().andIdEqualTo(id).andLevelEqualTo("L1");
+        List<MallGoodsCategory> mallGoodsCategories = categoryMapper.selectByExample(example);
+        assert mallGoodsCategories.size() == 1;
+        return mallGoodsCategories.get(0);
+    }
+
+    @Override
+    public List<MallGoodsCategory> findByPidAndLevel(Integer pid, String l2) {
+        MallGoodsCategoryExample example = new MallGoodsCategoryExample();
+        example.createCriteria().andPidEqualTo(pid).andLevelEqualTo(l2);
+        return categoryMapper.selectByExample(example);
     }
 }

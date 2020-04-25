@@ -7,6 +7,7 @@ import com.hyf.backend.coupon.template.admin.dto.AdminBannerUpdateDTO;
 import com.hyf.backend.coupon.template.admin.vo.AdminBannerVO;
 import com.hyf.backend.utils.common.vo.ResponseVO;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,4 +27,7 @@ public interface AdminBannerApi {
 
     @PostMapping("/create")
     ResponseVO<AdminBannerVO> create(@RequestBody @Validated AdminBannerCreateDTO createDTO);
+
+    @GetMapping("list1")
+    ResponseVO<AdminBannerVO> get(AdminBannerQueryDTO dto);
 }
